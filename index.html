@@ -1,58 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>testing | sharmavish</title>
-    <style>
-      :root {
-        color-scheme: light;
-        --bg: #f6f3ee;
-        --ink: #1c1917;
-        --accent: #0f766e;
-      }
-      * {
-        box-sizing: border-box;
-      }
-      body {
-        margin: 0;
-        min-height: 100vh;
-        display: grid;
-        place-items: center;
-        font-family: "Segoe UI", system-ui, sans-serif;
-        color: var(--ink);
-        background:
-          radial-gradient(circle at 20% 20%, #dbeafe 0%, transparent 45%),
-          radial-gradient(circle at 80% 10%, #ccfbf1 0%, transparent 40%),
-          var(--bg);
-      }
-      main {
-        max-width: 36rem;
-        padding: 2rem;
-        text-align: center;
-      }
-      h1 {
-        margin: 0 0 0.5rem;
-        font-size: clamp(2rem, 6vw, 3rem);
-        letter-spacing: -0.03em;
-      }
-      p {
-        margin: 0;
-        line-height: 1.5;
-        opacity: 0.85;
-      }
-      a {
-        color: var(--accent);
-      }
-    </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Artisan AI</title>
+    <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <main>
-      <h1>testing</h1>
-      <p>
-        GitHub Pages project site for
-        <a href="https://github.com/sharmavish/testing">sharmavish/testing</a>.
-      </p>
-    </main>
+    <div class="app">
+      <header class="hero">
+        <div class="brand-badge">✦ ARTISAN AI</div>
+        <h1>
+          Turn your craft into a
+          <span> digital product.</span>
+        </h1>
+        <p>फोटो डालें • अपनी भाषा में बोलें • AI तैयार करेगा</p>
+        <div class="ai-badge">✨ AI-powered artisan assistant</div>
+      </header>
+
+      <main class="main-card">
+        <div class="progress">
+          <div class="progress-step" id="step-photo">
+            <div class="step-circle" id="step-photo-circle">1</div>
+            <span>Product Photo</span>
+          </div>
+          <div class="progress-line"></div>
+          <div class="progress-step" id="step-voice">
+            <div class="step-circle" id="step-voice-circle">2</div>
+            <span>Voice</span>
+          </div>
+          <div class="progress-line"></div>
+          <div class="progress-step" id="step-listing">
+            <div class="step-circle" id="step-listing-circle">3</div>
+            <span>AI Listing</span>
+          </div>
+        </div>
+
+        <section class="section">
+          <div class="section-heading">
+            <div>
+              <h2>📷 Add your product</h2>
+              <p>Take a photo or upload an existing one</p>
+            </div>
+            <span class="step-label">STEP 1</span>
+          </div>
+
+          <input
+            id="photo-input"
+            type="file"
+            accept="image/*"
+            capture="environment"
+            hidden
+          />
+
+          <button class="photo-upload" id="photo-upload" type="button">
+            <div class="camera-icon">📷</div>
+            <strong>Add Product Photo</strong>
+            <span>Take a photo or choose from gallery</span>
+            <div class="choose-button">Choose Photo</div>
+          </button>
+
+          <div class="photo-preview hidden" id="photo-preview">
+            <img id="photo-img" alt="Product" />
+            <button class="remove-photo" id="remove-photo" type="button">
+              ×
+            </button>
+            <div class="photo-success">✓ Product photo added</div>
+          </div>
+        </section>
+
+        <div class="divider"><span>AND</span></div>
+
+        <section class="section">
+          <div class="section-heading">
+            <div>
+              <h2>🎙️ Describe your product</h2>
+              <p>Speak naturally in your preferred language</p>
+            </div>
+            <span class="step-label">STEP 2</span>
+          </div>
+
+          <div class="language-container">
+            <label for="language">भाषा / Language</label>
+            <select id="language">
+              <option value="hi-IN">हिन्दी • Hindi</option>
+              <option value="en-IN">English</option>
+              <option value="hi-IN-hinglish">Hinglish</option>
+            </select>
+          </div>
+
+          <div class="record-area">
+            <button class="mic-button" id="mic-button" type="button">🎙️</button>
+            <h3 id="record-title">Tap to speak</h3>
+            <p id="record-hint">Tell us about your product</p>
+            <div class="wave hidden" id="wave">
+              <span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+
+          <div class="status-card loading hidden" id="status-loading">
+            <span>✨</span>
+            AI is understanding your voice...
+          </div>
+          <div class="status-card success hidden" id="status-success">
+            <span>✓</span>
+            Voice successfully converted to text
+          </div>
+        </section>
+
+        <section class="transcript-card hidden" id="transcript-card">
+          <div class="transcript-header">
+            <div>
+              <h2>📝 What we heard</h2>
+              <p>You can edit the transcript if needed</p>
+            </div>
+            <span class="ai-small">AI</span>
+          </div>
+          <textarea id="transcript" rows="5"></textarea>
+        </section>
+
+        <section class="generate-section">
+          <button class="generate-button" id="generate-button" type="button" disabled>
+            <span>✨</span>
+            Generate Product Information
+            <span>→</span>
+          </button>
+          <p>
+            Artisan AI will combine your photo and description to create your
+            product listing.
+          </p>
+        </section>
+
+        <section class="listing-card hidden" id="listing-card">
+          <div class="transcript-header">
+            <div>
+              <h2 id="listing-title">Handmade Craft</h2>
+              <p>Generated listing ready to share</p>
+            </div>
+            <span class="ai-small">AI</span>
+          </div>
+          <p class="price" id="listing-price">₹499</p>
+          <div class="listing-meta" id="listing-tags"></div>
+          <p class="desc" id="listing-desc"></p>
+        </section>
+
+        <section class="how-it-works">
+          <h3>How Artisan AI works</h3>
+          <div class="workflow">
+            <div>
+              <span>📷</span>
+              <p>Show your craft</p>
+            </div>
+            <div class="arrow">→</div>
+            <div>
+              <span>🎙️</span>
+              <p>Describe it</p>
+            </div>
+            <div class="arrow">→</div>
+            <div>
+              <span>✨</span>
+              <p>AI creates listing</p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer>Built for artisans • Powered by AI</footer>
+    </div>
+
+    <script src="./app.js"></script>
   </body>
 </html>
