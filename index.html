@@ -56,23 +56,30 @@
     .hero-art {
       position: relative; min-height: 340px; border-radius: 28px; overflow: hidden;
       background:
-        radial-gradient(520px 280px at 90% 10%, rgba(255,190,140,0.35), transparent 55%),
-        radial-gradient(420px 260px at 10% 90%, rgba(0,0,0,0.22), transparent 50%),
-        linear-gradient(155deg, #4a1019 0%, #7a1f2e 48%, #c06a42 100%);
+        radial-gradient(ellipse 80% 60% at 15% 20%, rgba(122, 31, 46, 0.12), transparent 55%),
+        radial-gradient(ellipse 70% 50% at 90% 85%, rgba(160, 100, 60, 0.16), transparent 50%),
+        linear-gradient(165deg, #f7f1ea 0%, #ebe3d8 45%, #e4d8cc 100%);
       box-shadow: var(--shadow);
+      border: 1px solid rgba(20, 18, 26, 0.08);
       padding: 1.15rem 1.1rem 1.25rem;
       display: grid; align-content: space-between; gap: 0.9rem;
     }
     .hero-art::before {
-      content: ""; position: absolute; inset: 0; pointer-events: none;
-      background:
-        linear-gradient(120deg, transparent 40%, rgba(255,255,255,0.08) 50%, transparent 60%);
-      background-size: 220% 100%;
-      animation: sheen 7s ease-in-out infinite;
+      content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.45;
+      background-image:
+        linear-gradient(rgba(122, 31, 46, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(122, 31, 46, 0.05) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+    .hero-art::after {
+      content: ""; position: absolute; width: 180px; height: 180px; border-radius: 50%;
+      right: -40px; top: -50px; pointer-events: none;
+      background: radial-gradient(circle, rgba(122, 31, 46, 0.18), transparent 68%);
+      animation: sheen 8s ease-in-out infinite;
     }
     @keyframes sheen {
-      0%, 100% { background-position: 120% 0; }
-      50% { background-position: -20% 0; }
+      0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.9; }
+      50% { transform: translate(-18px, 22px) scale(1.12); opacity: 1; }
     }
     @keyframes floaty {
       0%, 100% { transform: translateY(0); }
@@ -83,11 +90,11 @@
       display: flex; align-items: center; justify-content: space-between; gap: 0.6rem;
     }
     .hero-art-top strong {
-      color: #fff; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--maroon-deep); font-size: 0.78rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;
     }
     .hero-art-top span {
-      color: rgba(255,255,255,0.72); font-size: 0.72rem; font-weight: 600;
-      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18);
+      color: var(--maroon); font-size: 0.72rem; font-weight: 700;
+      background: rgba(122, 31, 46, 0.08); border: 1px solid rgba(122, 31, 46, 0.14);
       padding: 0.28rem 0.55rem; border-radius: 999px;
     }
     .hero-plp {
@@ -97,14 +104,14 @@
     }
     .mini-card {
       background: #fffcfa; border-radius: 14px; overflow: hidden;
-      box-shadow: 0 14px 28px rgba(20, 10, 10, 0.28);
+      border: 1px solid rgba(20, 18, 26, 0.08);
+      box-shadow: 0 16px 32px rgba(60, 40, 30, 0.12);
       transform: rotate(-1.2deg);
     }
-    .mini-card:nth-child(2) { transform: rotate(1.6deg); animation-delay: 0.4s; }
+    .mini-card:nth-child(2) { transform: rotate(1.6deg); }
     .mini-media {
       aspect-ratio: 1 / 1;
-      background:
-        linear-gradient(145deg, #efe6dc 0%, #d9cfc4 100%);
+      background: linear-gradient(145deg, #efe6dc 0%, #d9cfc4 100%);
       position: relative;
     }
     .mini-card:nth-child(1) .mini-media {
@@ -128,8 +135,7 @@
     }
     .hero-art-caption {
       position: relative; z-index: 1; margin: 0;
-      color: rgba(255,255,255,0.92); font-size: 0.88rem; font-weight: 600; line-height: 1.45;
-      text-shadow: 0 1px 10px rgba(0,0,0,0.25);
+      color: var(--ink); font-size: 0.9rem; font-weight: 700; line-height: 1.45;
     }
     .workspace { scroll-margin-top: 1rem; }
     .workspace-head { margin-bottom: 1rem; }
