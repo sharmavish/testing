@@ -481,6 +481,40 @@
       animation: up 0.4s ease both;
     }
 
+    .result-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 1rem;
+      padding-top: 0.9rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .btn-danger {
+      background: #fff;
+      color: #b42318;
+      border: 1px solid rgba(180, 35, 24, 0.28);
+      box-shadow: none;
+    }
+
+    .btn-danger:hover {
+      background: #fff5f5;
+      transform: translateY(-1px);
+    }
+
+    .btn-soft {
+      background: #fff;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      box-shadow: none;
+      font-weight: 700;
+    }
+
+    .btn-soft:hover {
+      background: var(--soft);
+      transform: translateY(-1px);
+    }
+
     .result-top {
       display: flex;
       justify-content: space-between;
@@ -677,6 +711,10 @@
         <img class="hidden" id="listing-photo" alt="Product" />
         <div class="tags" id="listing-tags"></div>
         <p class="desc" id="listing-desc"></p>
+        <div class="result-actions">
+          <button class="btn btn-danger" id="delete-listing" type="button">Delete listing</button>
+          <button class="btn btn-soft" id="clear-all" type="button">Clear all inputs</button>
+        </div>
       </section>
     </section>
 
@@ -708,6 +746,8 @@
       var listingTags = document.getElementById("listing-tags");
       var listingDesc = document.getElementById("listing-desc");
       var listingPhoto = document.getElementById("listing-photo");
+      var deleteListing = document.getElementById("delete-listing");
+      var clearAll = document.getElementById("clear-all");
       var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 
       function setStep(id, on) {
@@ -729,7 +769,29 @@
 
       function hideListing() {
         listingCard.classList.add("hidden");
+        listingTitle.textContent = "Listing";
+        listingPrice.textContent = "";
+        listingDesc.textContent = "";
+        listingTags.innerHTML = "";
+        listingPhoto.removeAttribute("src");
+        listingPhoto.classList.add("hidden");
         updateUI();
+      }
+
+      function clearPhoto() {
+        state.hasPhoto = false;
+        photoInput.value = "";
+        if (previewUrl) URL.revokeObjectURL(previewUrl);
+        previewUrl = null;
+        photoImg.removeAttribute("src");
+        photoUpload.classList.remove("hidden");
+        photoPreview.classList.add("hidden");
+      }
+
+      function clearDescription() {
+        state.transcript = "";
+        transcript.value = "";
+        finalTranscript = "";
       }
 
       function setRecUI() {
@@ -760,13 +822,18 @@
       };
 
       removePhoto.onclick = function () {
-        state.hasPhoto = false;
-        photoInput.value = "";
-        if (previewUrl) URL.revokeObjectURL(previewUrl);
-        previewUrl = null;
-        photoImg.removeAttribute("src");
-        photoUpload.classList.remove("hidden");
-        photoPreview.classList.add("hidden");
+        clearPhoto();
+        hideListing();
+        updateUI();
+      };
+
+      deleteListing.onclick = function () {
+        hideListing();
+      };
+
+      clearAll.onclick = function () {
+        clearPhoto();
+        clearDescription();
         hideListing();
         updateUI();
       };
