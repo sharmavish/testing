@@ -992,7 +992,7 @@
         var text = String(clean || "").trim();
         var parts = text.split(/[.?!]\s+|\u0964\s*/);
         var title = (parts[0] || "Product listing").trim().slice(0, 72);
-        var rest = text.slice(title.length).replace(/^[\s.?!?]+/, "").trim();
+        var rest = text.slice(title.length).replace(/^[\s.?!]+/, "").trim();
         var amount = Math.round(Number(priceValue));
 
         // If user only entered one short line, show title only (no duplicate description).
