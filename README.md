@@ -1,7 +1,7 @@
 # Artisan AI
 
-Student project by **Pranjal Sharma**.
+Product listing demo by **Pranjal Sharma**.
 
-Photo + voice/text → simple product listing demo, inspired by [artisan-ai-frontend](https://rasesh-codes.github.io/artisan-ai-frontend/).
+Upload a craft photo, add a short voice or text description, and generate a listing.
 
-**Live site:** https://sharmavish.github.io/testing/
+**Live:** https://sharmavish.github.io/testing/
