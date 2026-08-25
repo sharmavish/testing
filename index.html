@@ -473,46 +473,66 @@
     }
 
     .result {
-      margin-top: 1.1rem;
-      padding: 1.25rem;
-      border-radius: 18px;
-      border: 1px solid rgba(122, 31, 46, 0.18);
-      background: linear-gradient(180deg, #fff8f6, #ffffff);
+      margin-top: 1.25rem;
+      border-radius: 24px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      overflow: hidden;
       animation: up 0.4s ease both;
     }
 
-    .result-actions {
+    .result-badge {
       display: flex;
-      flex-wrap: wrap;
-      gap: 0.6rem;
-      margin-top: 1rem;
-      padding-top: 0.9rem;
-      border-top: 1px solid var(--line);
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.75rem 1.2rem;
+      background: linear-gradient(90deg, #7a1f2e, #9a3a45);
+      color: #fff;
     }
 
-    .btn-danger {
-      background: #fff;
-      color: #b42318;
-      border: 1px solid rgba(180, 35, 24, 0.28);
-      box-shadow: none;
+    .result-badge strong {
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
     }
 
-    .btn-danger:hover {
-      background: #fff5f5;
-      transform: translateY(-1px);
+    .result-badge span {
+      font-size: 0.8rem;
+      opacity: 0.9;
     }
 
-    .btn-soft {
-      background: #fff;
-      color: var(--ink);
-      border: 1px solid var(--line);
-      box-shadow: none;
-      font-weight: 700;
+    .result-body {
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      gap: 0;
     }
 
-    .btn-soft:hover {
-      background: var(--soft);
-      transform: translateY(-1px);
+    .result-media {
+      position: relative;
+      min-height: 280px;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(122, 31, 46, 0.08), transparent 45%),
+        #f3eee8;
+      border-right: 1px solid var(--line);
+    }
+
+    .result-media img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .result-content {
+      padding: 1.35rem 1.4rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
     }
 
     .result-top {
@@ -520,44 +540,38 @@
       justify-content: space-between;
       gap: 1rem;
       align-items: start;
-      margin-bottom: 0.75rem;
+      margin: 0;
     }
 
     .result-top h3 {
       margin: 0;
       font-family: Newsreader, Georgia, serif;
-      font-size: 1.45rem;
+      font-size: 1.55rem;
       font-weight: 600;
       letter-spacing: -0.02em;
+      line-height: 1.2;
     }
 
     .price {
       margin: 0;
+      padding: 0.35rem 0.7rem;
+      border-radius: 999px;
+      background: rgba(122, 31, 46, 0.08);
       color: var(--maroon);
-      font-size: 1.3rem;
+      font-size: 1.15rem;
       font-weight: 800;
       white-space: nowrap;
-    }
-
-    .result img {
-      width: 100%;
-      max-height: 210px;
-      object-fit: contain;
-      margin-bottom: 0.75rem;
-      border-radius: 12px;
-      border: 1px solid var(--line);
-      background: #fff;
     }
 
     .tags {
       display: flex;
       flex-wrap: wrap;
       gap: 0.4rem;
-      margin-bottom: 0.7rem;
+      margin: 0;
     }
 
     .tag {
-      padding: 0.3rem 0.65rem;
+      padding: 0.32rem 0.7rem;
       border-radius: 999px;
       background: rgba(122, 31, 46, 0.08);
       color: var(--maroon);
@@ -565,12 +579,101 @@
       font-weight: 700;
     }
 
+    .desc-label {
+      margin: 0.15rem 0 0;
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
     .desc {
       margin: 0;
       color: #3d3842;
       font-size: 0.95rem;
-      line-height: 1.6;
+      line-height: 1.65;
       white-space: pre-wrap;
+    }
+
+    .result-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.55rem;
+      margin-top: 0.15rem;
+    }
+
+    .meta-item {
+      padding: 0.7rem 0.8rem;
+      border-radius: 12px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+    }
+
+    .meta-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+    }
+
+    .meta-item strong {
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .result-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: auto;
+      padding-top: 0.9rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .btn-danger,
+    .btn-soft {
+      min-height: 2.6rem;
+      padding: 0 1rem;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      box-shadow: none;
+    }
+
+    .btn-danger {
+      background: #fff5f5;
+      color: #b42318;
+      border: 1px solid rgba(180, 35, 24, 0.22);
+    }
+
+    .btn-danger:hover {
+      background: #ffe8e8;
+      transform: translateY(-1px);
+    }
+
+    .btn-soft {
+      background: #fff;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+
+    .btn-soft:hover {
+      background: var(--soft);
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 900px) {
+      .result-body { grid-template-columns: 1fr; }
+      .result-media {
+        min-height: 220px;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .result-meta { grid-template-columns: 1fr; }
     }
 
     footer {
@@ -704,16 +807,37 @@
       </div>
 
       <section class="result hidden" id="listing-card">
-        <div class="result-top">
-          <h3 id="listing-title">Listing</h3>
-          <p class="price" id="listing-price"></p>
+        <div class="result-badge">
+          <strong>Listing ready</strong>
+          <span>Marketplace draft</span>
         </div>
-        <img class="hidden" id="listing-photo" alt="Product" />
-        <div class="tags" id="listing-tags"></div>
-        <p class="desc" id="listing-desc"></p>
-        <div class="result-actions">
-          <button class="btn btn-danger" id="delete-listing" type="button">Delete listing</button>
-          <button class="btn btn-soft" id="clear-all" type="button">Clear all inputs</button>
+        <div class="result-body">
+          <div class="result-media">
+            <img class="hidden" id="listing-photo" alt="Product" />
+          </div>
+          <div class="result-content">
+            <div class="result-top">
+              <h3 id="listing-title">Listing</h3>
+              <p class="price" id="listing-price"></p>
+            </div>
+            <div class="tags" id="listing-tags"></div>
+            <p class="desc-label">Description</p>
+            <p class="desc" id="listing-desc"></p>
+            <div class="result-meta">
+              <div class="meta-item">
+                <span>Category</span>
+                <strong id="listing-category">Handmade</strong>
+              </div>
+              <div class="meta-item">
+                <span>Condition</span>
+                <strong>New · Handmade</strong>
+              </div>
+            </div>
+            <div class="result-actions">
+              <button class="btn btn-danger" id="delete-listing" type="button">Delete listing</button>
+              <button class="btn btn-soft" id="clear-all" type="button">Clear all inputs</button>
+            </div>
+          </div>
         </div>
       </section>
     </section>
@@ -746,6 +870,7 @@
       var listingTags = document.getElementById("listing-tags");
       var listingDesc = document.getElementById("listing-desc");
       var listingPhoto = document.getElementById("listing-photo");
+      var listingCategory = document.getElementById("listing-category");
       var deleteListing = document.getElementById("delete-listing");
       var clearAll = document.getElementById("clear-all");
       var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -773,6 +898,7 @@
         listingPrice.textContent = "";
         listingDesc.textContent = "";
         listingTags.innerHTML = "";
+        listingCategory.textContent = "Handmade";
         listingPhoto.removeAttribute("src");
         listingPhoto.classList.add("hidden");
         updateUI();
@@ -906,19 +1032,45 @@
         var title = first.length > 6 ? first.slice(0, 64) : "Handmade Product";
         var words = clean.toLowerCase();
         var tags = ["Handmade"];
-        if (/diya|दीया|lamp|candle/.test(words)) tags.push("Festive");
-        if (/pottery|मिट्टी|clay|ceramic/.test(words)) tags.push("Pottery");
-        if (/silk|सिल्क|fabric|कपड़ा|saree/.test(words)) tags.push("Textile");
-        if (/wood|लकड़ी|bamboo/.test(words)) tags.push("Woodwork");
-        if (/jewelry|jewellery|गहना|necklace/.test(words)) tags.push("Jewellery");
+        var category = "Handmade crafts";
+        if (/diya|दीया|lamp|candle|macrame|macramé|keychain|feather/.test(words)) {
+          tags.push("Home decor");
+          category = "Home decor";
+        }
+        if (/pottery|मिट्टी|clay|ceramic/.test(words)) {
+          tags.push("Pottery");
+          category = "Pottery";
+        }
+        if (/silk|सिल्क|fabric|कपड़ा|saree|textile/.test(words)) {
+          tags.push("Textile");
+          category = "Textiles";
+        }
+        if (/wood|लकड़ी|bamboo/.test(words)) {
+          tags.push("Woodwork");
+          category = "Woodwork";
+        }
+        if (/jewelry|jewellery|गहना|necklace|earring/.test(words)) {
+          tags.push("Jewellery");
+          category = "Jewellery";
+        }
+        if (/gift|गिफ्ट|present/.test(words)) tags.push("Gift ready");
+
         var price = 499;
         if (clean.length > 80) price = 799;
         if (clean.length > 140) price = 1299;
-        if (/silk|सिल्क|silver|gold|सोना/.test(words)) price += 700;
+        if (/silk|सिल्क|silver|gold|सोना|macrame|macramé/.test(words)) price += 300;
+
+        var desc = clean;
+        if (desc.length < 40) {
+          desc += "\n\nCarefully handmade and finished for everyday use or thoughtful gifting.";
+        } else {
+          desc += "\n\nEach piece is made by hand, so small variations add to its character.";
+        }
 
         listingTitle.textContent = title;
         listingPrice.textContent = "₹" + price.toLocaleString("en-IN");
-        listingDesc.textContent = clean + "\n\nHandmade with care. Suitable for gifting and everyday use.";
+        listingDesc.textContent = desc;
+        listingCategory.textContent = category;
         listingTags.innerHTML = "";
         tags.slice(0, 4).forEach(function (t) {
           var s = document.createElement("span");
