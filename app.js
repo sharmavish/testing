@@ -97,33 +97,6 @@
       .slice(0, 40) || fallback || "product";
   }
 
-  function imageFormat(dataUrl) {
-    if (!dataUrl || typeof dataUrl !== "string") return null;
-    if (dataUrl.indexOf("data:image/png") === 0) return "PNG";
-    if (dataUrl.indexOf("data:image/jpeg") === 0 || dataUrl.indexOf("data:image/jpg") === 0)
-      return "JPEG";
-    if (dataUrl.indexOf("data:image/webp") === 0) return "WEBP";
-    if (dataUrl.indexOf("data:image/") === 0) return "JPEG";
-    return null;
-  }
-
-  function loadImageSize(src) {
-    return new Promise(function (resolve) {
-      if (!src) {
-        resolve(null);
-        return;
-      }
-      var img = new Image();
-      img.onload = function () {
-        resolve({ w: img.naturalWidth || img.width, h: img.naturalHeight || img.height });
-      };
-      img.onerror = function () {
-        resolve(null);
-      };
-      img.src = src;
-    });
-  }
-
   function getJsPdf() {
     if (window.jspdf && typeof window.jspdf.jsPDF === "function") {
       return window.jspdf.jsPDF;
@@ -132,131 +105,266 @@
     return null;
   }
 
-  async function buildPdf(items, options) {
+  /** Convert any image data URL to JPEG for reliable PDF embedding + cover crop. */
+  function prepareImageJpeg(src, sizePx) {
+    return new Promise(function (resolve) {
+      if (!src) {
+        resolve(null);
+        return;
+      }
+      var img = new Image();
+      img.onload = function () {
+        try {
+          var side = sizePx || 900;
+          var canvas = document.createElement("canvas");
+          canvas.width = side;
+          canvas.height = side;
+          var ctx = canvas.getContext("2d");
+          ctx.fillStyle = "#f3eee8";
+          ctx.fillRect(0, 0, side, side);
+          var iw = img.naturalWidth || img.width;
+          var ih = img.naturalHeight || img.height;
+          if (!iw || !ih) {
+            resolve(null);
+            return;
+          }
+          var scale = Math.max(side / iw, side / ih);
+          var dw = iw * scale;
+          var dh = ih * scale;
+          var dx = (side - dw) / 2;
+          var dy = (side - dh) / 2;
+          ctx.drawImage(img, dx, dy, dw, dh);
+          resolve(canvas.toDataURL("image/jpeg", 0.88));
+        } catch (e) {
+          resolve(null);
+        }
+      };
+      img.onerror = function () {
+        resolve(null);
+      };
+      img.src = src;
+    });
+  }
+
+  function cleanDesc(item) {
+    var title = String(item.title || "Product").trim();
+    var desc = String(item.description || "").trim();
+    var paragraphs = desc
+      .split(/\n\n+/)
+      .map(function (p) {
+        return p.trim();
+      })
+      .filter(Boolean);
+    if (paragraphs.length && normalizeText(paragraphs[0]) === normalizeText(title)) {
+      paragraphs = paragraphs.slice(1);
+    }
+    desc = paragraphs.join(" ").trim();
+    if (normalizeText(desc) === normalizeText(title)) desc = "";
+    return desc;
+  }
+
+  function drawHeaderBar(doc, pageW, title, subtitle) {
+    doc.setFillColor(122, 31, 46);
+    doc.rect(0, 0, pageW, 28, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.text(title, 16, 12);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(255, 230, 230);
+    doc.text(subtitle, 16, 20);
+    doc.setTextColor(0, 0, 0);
+  }
+
+  function drawFooter(doc, pageW, pageH, pageNum, pageCount) {
+    doc.setDrawColor(210, 200, 190);
+    doc.setLineWidth(0.3);
+    doc.line(16, pageH - 12, pageW - 16, pageH - 12);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
+    doc.setTextColor(120, 115, 110);
+    doc.text("Listing Studio  ·  Pranjal Sharma  ·  VIT-AP", 16, pageH - 6);
+    doc.text(String(pageNum) + " / " + String(pageCount), pageW - 16, pageH - 6, {
+      align: "right",
+    });
+    doc.setTextColor(0, 0, 0);
+  }
+
+  function drawProductCard(doc, item, jpeg, x, y, cardW, cardH, showDesc) {
+    var pad = 4;
+    var imgSide = cardW - pad * 2;
+    var title = String(item.title || "Product").trim();
+    var price = String(item.price || "").trim();
+    var desc = cleanDesc(item);
+
+    doc.setFillColor(255, 255, 255);
+    doc.setDrawColor(220, 210, 200);
+    doc.setLineWidth(0.4);
+    doc.roundedRect(x, y, cardW, cardH, 3, 3, "FD");
+
+    doc.setFillColor(243, 238, 232);
+    doc.roundedRect(x + pad, y + pad, imgSide, imgSide, 2, 2, "F");
+
+    if (jpeg) {
+      try {
+        doc.addImage(jpeg, "JPEG", x + pad, y + pad, imgSide, imgSide);
+      } catch (e) {}
+    } else {
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9);
+      doc.setTextColor(150, 140, 130);
+      doc.text("No image", x + cardW / 2, y + pad + imgSide / 2, { align: "center" });
+      doc.setTextColor(0, 0, 0);
+    }
+
+    var textY = y + pad + imgSide + 7;
+    var textW = cardW - pad * 2;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(10);
+    doc.setTextColor(20, 18, 26);
+    var titleLines = doc.splitTextToSize(title, textW).slice(0, 2);
+    doc.text(titleLines, x + pad, textY);
+    textY += titleLines.length * 4.5 + 2;
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(13);
+    doc.setTextColor(122, 31, 46);
+    doc.text(price || "-", x + pad, textY);
+    textY += 6;
+
+    if (showDesc && desc) {
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      doc.setTextColor(90, 85, 80);
+      var maxLines = Math.max(1, Math.floor((y + cardH - textY - 4) / 3.6));
+      var descLines = doc.splitTextToSize(desc, textW).slice(0, maxLines);
+      doc.text(descLines, x + pad, textY);
+    }
+    doc.setTextColor(0, 0, 0);
+  }
+
+  async function buildCatalogPdf(items) {
     var JsPDF = getJsPdf();
     if (!JsPDF) {
       alert("PDF library failed to load. Refresh the page and try again.");
       return null;
     }
 
+    var prepared = [];
+    for (var i = 0; i < items.length; i++) {
+      prepared.push({
+        item: items[i],
+        jpeg: await prepareImageJpeg(items[i].image || "", 900),
+      });
+    }
+
     var doc = new JsPDF({ unit: "mm", format: "a4" });
-    var margin = 16;
     var pageW = doc.internal.pageSize.getWidth();
     var pageH = doc.internal.pageSize.getHeight();
-    var contentW = pageW - margin * 2;
-    var y = margin;
-    var catalog = !options || !options.single;
+    var margin = 14;
+    var gap = 8;
+    var cols = 2;
+    var cardW = (pageW - margin * 2 - gap) / cols;
+    var cardH = 118;
+    var top = 36;
+    var bottom = 18;
+    var rowsPerPage = Math.floor((pageH - top - bottom) / (cardH + gap));
+    var perPage = cols * Math.max(1, rowsPerPage);
+    var pageCount = Math.max(1, Math.ceil(prepared.length / perPage));
 
-    function ensureSpace(needed) {
-      if (y + needed <= pageH - margin) return;
-      doc.addPage();
-      y = margin;
-    }
-
-    if (catalog) {
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(18);
-      doc.setTextColor(122, 31, 46);
-      doc.text("Product listings", margin, y);
-      y += 8;
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(10);
-      doc.setTextColor(90, 90, 90);
-      doc.text(
-        items.length +
-          (items.length === 1 ? " product" : " products") +
-          "  |  Listing Studio  |  Pranjal Sharma",
-        margin,
-        y
+    for (var p = 0; p < pageCount; p++) {
+      if (p > 0) doc.addPage();
+      drawHeaderBar(
+        doc,
+        pageW,
+        "Product listings",
+        prepared.length +
+          (prepared.length === 1 ? " product" : " products") +
+          "  ·  Listing Studio catalog"
       );
-      doc.setTextColor(0, 0, 0);
-      y += 6;
-      doc.setDrawColor(200, 190, 180);
-      doc.line(margin, y, pageW - margin, y);
-      y += 10;
-    }
 
-    for (var i = 0; i < items.length; i++) {
-      var item = items[i];
-      var title = String(item.title || "Product").trim();
-      var price = String(item.price || "").trim();
-      var desc = String(item.description || "").trim();
-      var imgSrc = item.image || "";
-      var fmt = imageFormat(imgSrc);
-      var size = fmt ? await loadImageSize(imgSrc) : null;
-      var imgH = 0;
-      var imgW = 0;
-
-      if (size && size.w > 0 && size.h > 0) {
-        imgW = Math.min(contentW, 90);
-        imgH = (size.h / size.w) * imgW;
-        if (imgH > 70) {
-          imgH = 70;
-          imgW = (size.w / size.h) * imgH;
-        }
+      var start = p * perPage;
+      var slice = prepared.slice(start, start + perPage);
+      for (var j = 0; j < slice.length; j++) {
+        var col = j % cols;
+        var row = Math.floor(j / cols);
+        var x = margin + col * (cardW + gap);
+        var y = top + row * (cardH + gap);
+        drawProductCard(doc, slice[j].item, slice[j].jpeg, x, y, cardW, cardH, true);
       }
-
-      var titleLines = doc.splitTextToSize(title, contentW);
-      var descLines = desc ? doc.splitTextToSize(desc, contentW) : [];
-      var blockH =
-        titleLines.length * 6 +
-        7 +
-        (descLines.length ? descLines.length * 5 + 2 : 0) +
-        (imgH ? imgH + 6 : 0) +
-        10;
-
-      if (i > 0) ensureSpace(Math.min(blockH, 60));
-
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(13);
-      doc.setTextColor(20, 18, 26);
-      ensureSpace(titleLines.length * 6 + 4);
-      doc.text(titleLines, margin, y);
-      y += titleLines.length * 6 + 2;
-
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(12);
-      doc.setTextColor(122, 31, 46);
-      ensureSpace(8);
-      doc.text(price || "Price not set", margin, y);
-      y += 7;
-      doc.setTextColor(0, 0, 0);
-
-      if (imgH && fmt) {
-        ensureSpace(imgH + 4);
-        try {
-          doc.addImage(imgSrc, fmt, margin, y, imgW, imgH);
-          y += imgH + 5;
-        } catch (e) {
-          /* skip broken image */
-        }
-      }
-
-      if (descLines.length) {
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        doc.setTextColor(60, 60, 60);
-        ensureSpace(descLines.length * 5 + 2);
-        doc.text(descLines, margin, y);
-        y += descLines.length * 5 + 4;
-        doc.setTextColor(0, 0, 0);
-      }
-
-      if (catalog && i < items.length - 1) {
-        y += 2;
-        ensureSpace(8);
-        doc.setDrawColor(220, 210, 200);
-        doc.line(margin, y, pageW - margin, y);
-        y += 8;
-      }
+      drawFooter(doc, pageW, pageH, p + 1, pageCount);
     }
 
     return doc;
   }
 
-  async function downloadListingsAsPdf(items, filename) {
+  async function buildSinglePdf(item) {
+    var JsPDF = getJsPdf();
+    if (!JsPDF) {
+      alert("PDF library failed to load. Refresh the page and try again.");
+      return null;
+    }
+
+    var jpeg = await prepareImageJpeg(item.image || "", 1200);
+    var doc = new JsPDF({ unit: "mm", format: "a4" });
+    var pageW = doc.internal.pageSize.getWidth();
+    var pageH = doc.internal.pageSize.getHeight();
+    var margin = 18;
+    var title = String(item.title || "Product").trim();
+    var price = String(item.price || "").trim();
+    var desc = cleanDesc(item);
+
+    drawHeaderBar(doc, pageW, "Product sheet", "Listing Studio  ·  Pranjal Sharma");
+
+    var imgSize = Math.min(pageW - margin * 2, 120);
+    var imgX = (pageW - imgSize) / 2;
+    var imgY = 40;
+
+    doc.setFillColor(243, 238, 232);
+    doc.roundedRect(imgX - 2, imgY - 2, imgSize + 4, imgSize + 4, 4, 4, "F");
+    if (jpeg) {
+      try {
+        doc.addImage(jpeg, "JPEG", imgX, imgY, imgSize, imgSize);
+      } catch (e) {}
+    }
+
+    var textY = imgY + imgSize + 14;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(20);
+    doc.setTextColor(20, 18, 26);
+    var titleLines = doc.splitTextToSize(title, pageW - margin * 2);
+    doc.text(titleLines, pageW / 2, textY, { align: "center" });
+    textY += titleLines.length * 8 + 4;
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(22);
+    doc.setTextColor(122, 31, 46);
+    doc.text(price || "-", pageW / 2, textY, { align: "center" });
+    textY += 12;
+
+    if (desc) {
+      doc.setDrawColor(220, 210, 200);
+      doc.setLineWidth(0.3);
+      doc.line(margin + 20, textY, pageW - margin - 20, textY);
+      textY += 10;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(11);
+      doc.setTextColor(70, 65, 60);
+      var descLines = doc.splitTextToSize(desc, pageW - margin * 2 - 10);
+      doc.text(descLines, pageW / 2, textY, { align: "center" });
+    }
+
+    drawFooter(doc, pageW, pageH, 1, 1);
+    return doc;
+  }
+
+  async function downloadListingsAsPdf(items, filename, single) {
     if (!items || !items.length) return;
-    var doc = await buildPdf(items, { single: items.length === 1 });
+    var doc =
+      single || items.length === 1
+        ? await buildSinglePdf(items[0])
+        : await buildCatalogPdf(items);
     if (!doc) return;
     doc.save(filename);
   }
@@ -461,7 +569,7 @@
         return x.id === one.getAttribute("data-download-one");
       });
       if (!item) return;
-      downloadListingsAsPdf([item], safeFilename(item.title, "product") + ".pdf");
+      downloadListingsAsPdf([item], safeFilename(item.title, "product") + ".pdf", true);
     }
   });
 
