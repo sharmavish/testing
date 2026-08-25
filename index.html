@@ -53,8 +53,84 @@
     .btn-main.full { width: 100%; border-radius: 12px; }
     .btn-soft { background: #fff; border: 1px solid var(--line); min-height: 2.4rem; font-size: 0.84rem; border-radius: 10px; }
     .btn-danger { background: #fff; color: #9f1239; border: 1px solid rgba(159,18,57,0.25); min-height: 2.2rem; font-size: 0.8rem; border-radius: 8px; padding: 0 0.8rem; }
-    .hero-art { position: relative; min-height: 300px; border-radius: 28px; overflow: hidden; background: linear-gradient(155deg, #5c1621 0%, #7a1f2e 42%, #a45a3a 100%); box-shadow: var(--shadow); }
-    .hero-art p { position: absolute; left: 1.2rem; right: 1.2rem; bottom: 1.2rem; margin: 0; color: rgba(255,255,255,0.92); font-size: 0.92rem; }
+    .hero-art {
+      position: relative; min-height: 340px; border-radius: 28px; overflow: hidden;
+      background:
+        radial-gradient(520px 280px at 90% 10%, rgba(255,190,140,0.35), transparent 55%),
+        radial-gradient(420px 260px at 10% 90%, rgba(0,0,0,0.22), transparent 50%),
+        linear-gradient(155deg, #4a1019 0%, #7a1f2e 48%, #c06a42 100%);
+      box-shadow: var(--shadow);
+      padding: 1.15rem 1.1rem 1.25rem;
+      display: grid; align-content: space-between; gap: 0.9rem;
+    }
+    .hero-art::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background:
+        linear-gradient(120deg, transparent 40%, rgba(255,255,255,0.08) 50%, transparent 60%);
+      background-size: 220% 100%;
+      animation: sheen 7s ease-in-out infinite;
+    }
+    @keyframes sheen {
+      0%, 100% { background-position: 120% 0; }
+      50% { background-position: -20% 0; }
+    }
+    @keyframes floaty {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    .hero-art-top {
+      position: relative; z-index: 1;
+      display: flex; align-items: center; justify-content: space-between; gap: 0.6rem;
+    }
+    .hero-art-top strong {
+      color: #fff; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .hero-art-top span {
+      color: rgba(255,255,255,0.72); font-size: 0.72rem; font-weight: 600;
+      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18);
+      padding: 0.28rem 0.55rem; border-radius: 999px;
+    }
+    .hero-plp {
+      position: relative; z-index: 1;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem;
+      animation: floaty 5.5s ease-in-out infinite;
+    }
+    .mini-card {
+      background: #fffcfa; border-radius: 14px; overflow: hidden;
+      box-shadow: 0 14px 28px rgba(20, 10, 10, 0.28);
+      transform: rotate(-1.2deg);
+    }
+    .mini-card:nth-child(2) { transform: rotate(1.6deg); animation-delay: 0.4s; }
+    .mini-media {
+      aspect-ratio: 1 / 1;
+      background:
+        linear-gradient(145deg, #efe6dc 0%, #d9cfc4 100%);
+      position: relative;
+    }
+    .mini-card:nth-child(1) .mini-media {
+      background:
+        radial-gradient(circle at 35% 30%, #f6e7d4 0%, transparent 45%),
+        linear-gradient(160deg, #c9a07a 0%, #8b5a3c 55%, #5c1621 100%);
+    }
+    .mini-card:nth-child(2) .mini-media {
+      background:
+        radial-gradient(circle at 70% 25%, #f0ebe4 0%, transparent 40%),
+        linear-gradient(160deg, #b7c4b0 0%, #6f7f68 50%, #3d4a3a 100%);
+    }
+    .mini-body { padding: 0.55rem 0.6rem 0.65rem; }
+    .mini-body strong {
+      display: block; font-size: 0.72rem; font-weight: 700; color: var(--ink);
+      line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .mini-body em {
+      display: block; margin-top: 0.2rem; font-style: normal;
+      color: var(--maroon); font-size: 0.88rem; font-weight: 800;
+    }
+    .hero-art-caption {
+      position: relative; z-index: 1; margin: 0;
+      color: rgba(255,255,255,0.92); font-size: 0.88rem; font-weight: 600; line-height: 1.45;
+      text-shadow: 0 1px 10px rgba(0,0,0,0.25);
+    }
     .workspace { scroll-margin-top: 1rem; }
     .workspace-head { margin-bottom: 1rem; }
     .workspace-head h2 { margin: 0; font-size: 1.2rem; font-weight: 800; }
@@ -102,7 +178,8 @@
     footer strong { color: var(--ink); }
     @media (max-width: 900px) {
       .hero, .board { grid-template-columns: 1fr; }
-      .hero-art { min-height: 210px; order: -1; }
+      .hero-art { min-height: 280px; order: -1; }
+      .hero-plp { max-width: 320px; margin: 0 auto; }
       .nav-divider, .nav-product { display: none; }
       .plp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
@@ -123,11 +200,25 @@
     <section class="hero">
       <div>
         <h1>From photo to product listing.</h1>
-        <p>Create a clean product catalog with bold pricing and downloadable listings ? built like a converting PLP.</p>
+        <p>Create a clean product catalog with bold pricing and downloadable listings - built like a converting PLP.</p>
         <a class="btn btn-main" href="#workspace">Start creating</a>
       </div>
       <div class="hero-art" aria-hidden="true">
-        <p>Clear cards, strong price, easy browse ? patterns from high-converting product listing pages.</p>
+        <div class="hero-art-top">
+          <strong>Live preview</strong>
+          <span>2 products</span>
+        </div>
+        <div class="hero-plp">
+          <article class="mini-card">
+            <div class="mini-media"></div>
+            <div class="mini-body"><strong>Handwoven tote</strong><em>&#8377;1,299</em></div>
+          </article>
+          <article class="mini-card">
+            <div class="mini-media"></div>
+            <div class="mini-body"><strong>Clay dinner set</strong><em>&#8377;2,450</em></div>
+          </article>
+        </div>
+        <p class="hero-art-caption">Clear cards. Bold price. Easy browse.</p>
       </div>
     </section>
 
