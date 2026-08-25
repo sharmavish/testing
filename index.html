@@ -5,293 +5,186 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta name="author" content="Pranjal Sharma" />
-  <meta name="description" content="Artisan AI by Pranjal Sharma — turn craft photos and voice into product listings." />
-  <title>Artisan AI · Pranjal Sharma</title>
+  <meta name="description" content="Product listing assistant by Pranjal Sharma, VIT-AP University." />
+  <title>Product Listing Assistant · Pranjal Sharma · VIT-AP</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --ink: #16131f;
-      --muted: #5c5668;
-      --line: rgba(22, 19, 31, 0.12);
-      --paper: #f7f4ef;
-      --panel: rgba(255, 252, 248, 0.88);
-      --accent: #c45c26;
-      --accent-deep: #9a3f14;
-      --indigo: #2a2450;
-      --indigo-soft: #ece8f7;
-      --ok: #1f6b4a;
-      --shadow: 0 30px 80px rgba(42, 36, 80, 0.14);
-      --radius: 28px;
+      --maroon: #6b1e2a;
+      --maroon-deep: #4f1520;
+      --ink: #1c1917;
+      --muted: #5f5a55;
+      --line: #e4ddd5;
+      --bg: #f5f2ed;
+      --panel: #ffffff;
+      --soft: #f8f5f1;
+      --accent: #6b1e2a;
+      --ok: #166534;
+      --shadow: 0 16px 40px rgba(79, 21, 32, 0.08);
     }
 
     * { box-sizing: border-box; }
-
     html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
       min-height: 100vh;
       color: var(--ink);
-      font-family: Outfit, "Segoe UI", sans-serif;
+      font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
       background:
-        radial-gradient(ellipse 80% 50% at 10% -10%, #ddd6f3 0%, transparent 55%),
-        radial-gradient(ellipse 70% 45% at 95% 5%, #f3d9c4 0%, transparent 50%),
-        radial-gradient(ellipse 60% 40% at 50% 100%, #d9e5df 0%, transparent 55%),
-        linear-gradient(165deg, #f4f0ea 0%, #ebe4f2 48%, #f2ebe3 100%);
-      background-attachment: fixed;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      opacity: 0.35;
-      background-image:
-        linear-gradient(rgba(22, 19, 31, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(22, 19, 31, 0.03) 1px, transparent 1px);
-      background-size: 48px 48px;
-      mask-image: radial-gradient(circle at center, black 35%, transparent 85%);
+        linear-gradient(180deg, #efe8e1 0%, var(--bg) 28%, #f7f4ef 100%);
     }
 
     button, select, textarea { font: inherit; }
-    button { cursor: pointer; border: 0; }
+    button { cursor: pointer; border: 0; background: none; }
 
-    .wrap {
-      width: min(1120px, calc(100% - 2rem));
+    .page {
+      width: min(980px, calc(100% - 2rem));
       margin: 0 auto;
-      padding: 1.25rem 0 3.5rem;
-      position: relative;
-      z-index: 1;
+      padding: 0 0 2.5rem;
     }
 
-    /* ----- HERO: one composition ----- */
-    .hero {
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 2.5rem;
-      align-items: end;
-      min-height: min(78vh, 720px);
-      padding: 1.5rem 0 2.5rem;
-      animation: rise 0.8s ease both;
+    /* Compact university header */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.85rem 0;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 1.75rem;
     }
 
-    @keyframes rise {
-      from { opacity: 0; transform: translateY(18px); }
+    .logo-link {
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+    }
+
+    .logo-link img {
+      display: block;
+      height: 48px;
+      width: auto;
+    }
+
+    .top-meta {
+      text-align: right;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.35;
+    }
+
+    .top-meta strong {
+      display: block;
+      color: var(--maroon);
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    /* Intro — tighter, professional */
+    .intro {
+      margin-bottom: 1.5rem;
+      animation: fade 0.55s ease both;
+    }
+
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: none; }
     }
 
-    @keyframes floaty {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-
-    .brand {
-      font-family: Syne, sans-serif;
-      font-size: clamp(3.2rem, 8vw, 5.6rem);
-      font-weight: 800;
-      line-height: 0.92;
-      letter-spacing: -0.045em;
-      margin: 0 0 1rem;
-      color: var(--indigo);
-    }
-
-    .brand em {
-      font-style: normal;
-      color: var(--accent);
-    }
-
-    .hero-copy h2 {
-      margin: 0 0 0.85rem;
-      max-width: 12ch;
-      font-family: Syne, sans-serif;
-      font-size: clamp(1.7rem, 3.4vw, 2.35rem);
+    .eyebrow {
+      margin: 0 0 0.5rem;
+      color: var(--maroon);
+      font-size: 0.78rem;
       font-weight: 700;
-      line-height: 1.15;
-      letter-spacing: -0.03em;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
-    .hero-copy p {
-      margin: 0 0 1.6rem;
-      max-width: 34ch;
+    .intro h1 {
+      margin: 0 0 0.65rem;
+      max-width: 18ch;
+      font-family: "Source Serif 4", Georgia, serif;
+      font-size: clamp(1.85rem, 4vw, 2.55rem);
+      font-weight: 700;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+    }
+
+    .intro p {
+      margin: 0;
+      max-width: 52ch;
       color: var(--muted);
-      font-size: 1.05rem;
+      font-size: 1.02rem;
       line-height: 1.55;
     }
 
-    .cta-row {
+    .progress {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.75rem;
-      align-items: center;
+      gap: 0.55rem;
+      margin: 1.25rem 0 1rem;
     }
 
-    .btn {
+    .progress span {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      min-height: 3rem;
-      padding: 0 1.25rem;
+      gap: 0.4rem;
+      padding: 0.45rem 0.75rem;
+      border: 1px solid var(--line);
       border-radius: 999px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
-    }
-
-    .btn:hover { transform: translateY(-1px); }
-
-    .btn-primary {
-      background: var(--indigo);
-      color: #fff;
-      box-shadow: 0 14px 30px rgba(42, 36, 80, 0.25);
-    }
-
-    .btn-primary:hover { background: #1f1a3d; }
-
-    .btn-primary:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-
-    .btn-quiet {
-      background: transparent;
+      background: var(--panel);
       color: var(--muted);
-      padding-left: 0.4rem;
-    }
-
-    .credit {
-      margin-top: 1.4rem;
-      color: var(--muted);
-      font-size: 0.92rem;
-    }
-
-    .credit strong { color: var(--ink); font-weight: 600; }
-
-    .hero-visual {
-      position: relative;
-      min-height: 340px;
-      border-radius: 32px;
-      overflow: hidden;
-      background:
-        linear-gradient(145deg, #2a2450 0%, #3d3468 45%, #c45c26 140%);
-      box-shadow: var(--shadow);
-      animation: rise 0.9s ease 0.1s both;
-    }
-
-    .hero-visual::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(circle at 30% 25%, rgba(255,255,255,0.22), transparent 35%),
-        radial-gradient(circle at 80% 70%, rgba(243, 180, 120, 0.35), transparent 40%);
-    }
-
-    .loom {
-      position: absolute;
-      inset: 18% 12%;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: repeat(8, 1fr);
-      gap: 10px;
-      animation: floaty 6s ease-in-out infinite;
-    }
-
-    .loom span {
-      border-radius: 999px;
-      background: rgba(255,255,255,0.14);
-      border: 1px solid rgba(255,255,255,0.18);
-    }
-
-    .loom span:nth-child(odd) { background: rgba(255, 196, 140, 0.35); }
-    .loom span:nth-child(3n) { transform: translateY(18px); }
-    .loom span:nth-child(5n) { transform: translateY(-12px); }
-
-    .visual-caption {
-      position: absolute;
-      left: 1.2rem;
-      right: 1.2rem;
-      bottom: 1.2rem;
-      z-index: 2;
-      color: rgba(255,255,255,0.88);
-      font-size: 0.9rem;
-      line-height: 1.4;
-    }
-
-    /* ----- WORKSPACE ----- */
-    .workspace {
-      scroll-margin-top: 1.5rem;
-      animation: rise 0.85s ease 0.15s both;
-    }
-
-    .workspace-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: end;
-      gap: 1rem;
-      margin: 0 0 1rem;
-    }
-
-    .workspace-head h3 {
-      margin: 0;
-      font-family: Syne, sans-serif;
-      font-size: 1.35rem;
-      letter-spacing: -0.02em;
-    }
-
-    .workspace-head p {
-      margin: 0.3rem 0 0;
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
-    .steps {
-      display: flex;
-      gap: 0.5rem;
-      color: var(--muted);
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 600;
     }
 
-    .steps b {
+    .progress span b {
+      width: 1.25rem;
+      height: 1.25rem;
       display: inline-grid;
       place-items: center;
-      width: 1.35rem;
-      height: 1.35rem;
-      margin-right: 0.35rem;
-      border-radius: 999px;
-      background: rgba(22,19,31,0.08);
-      font-size: 0.72rem;
+      border-radius: 50%;
+      background: #efe8e1;
+      font-size: 0.7rem;
     }
 
-    .steps .on { color: var(--accent-deep); }
-    .steps .on b { background: var(--accent); color: #fff; }
+    .progress .on {
+      border-color: #d7b4ba;
+      background: #f8eef0;
+      color: var(--maroon);
+    }
+
+    .progress .on b {
+      background: var(--maroon);
+      color: #fff;
+    }
 
     .panel {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 1px;
-      background: var(--line);
       border: 1px solid var(--line);
-      border-radius: var(--radius);
+      border-radius: 18px;
       overflow: hidden;
+      background: var(--panel);
       box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
+      animation: fade 0.6s ease 0.05s both;
     }
 
     .pane {
-      background: var(--panel);
-      padding: 1.4rem;
+      padding: 1.25rem;
     }
 
-    .pane h4 {
-      margin: 0 0 0.35rem;
-      font-size: 1rem;
+    .pane + .pane {
+      border-left: 1px solid var(--line);
+    }
+
+    .pane h2 {
+      margin: 0 0 0.25rem;
+      font-size: 1.05rem;
       font-weight: 700;
     }
 
@@ -303,155 +196,165 @@
 
     .drop {
       width: 100%;
-      min-height: 240px;
+      min-height: 220px;
       display: grid;
       place-content: center;
-      gap: 0.55rem;
+      gap: 0.4rem;
       text-align: center;
-      border: 1.5px dashed rgba(42, 36, 80, 0.25);
-      border-radius: 20px;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.7), rgba(236, 232, 247, 0.55));
-      transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+      border: 1.5px dashed #cfc4bb;
+      border-radius: 14px;
+      background: var(--soft);
+      transition: border-color 0.15s ease, background 0.15s ease;
     }
 
     .drop:hover {
-      border-color: var(--accent);
-      transform: translateY(-2px);
-      background: linear-gradient(180deg, #fff, #f8efe8);
+      border-color: var(--maroon);
+      background: #faf6f4;
     }
 
     .drop svg {
-      width: 42px;
-      height: 42px;
-      stroke: var(--indigo);
+      width: 36px;
+      height: 36px;
+      stroke: var(--maroon);
       fill: none;
       stroke-width: 1.7;
+      margin: 0 auto 0.2rem;
     }
 
-    .drop strong { font-size: 1rem; }
-    .drop span { color: var(--muted); font-size: 0.88rem; }
+    .drop strong { font-size: 0.98rem; }
+    .drop span { color: var(--muted); font-size: 0.85rem; }
 
-    .preview {
-      display: grid;
-      gap: 0.85rem;
-    }
+    .preview { display: grid; gap: 0.75rem; }
 
     .preview img {
       width: 100%;
-      max-height: 280px;
+      max-height: 260px;
       object-fit: contain;
-      border-radius: 18px;
-      background: #f0ebe4;
+      border-radius: 12px;
       border: 1px solid var(--line);
+      background: var(--soft);
+    }
+
+    .linkish {
+      justify-self: start;
+      color: var(--maroon);
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 2px;
     }
 
     .field {
       display: grid;
-      gap: 0.4rem;
-      margin-bottom: 0.9rem;
+      gap: 0.35rem;
+      margin-bottom: 0.85rem;
     }
 
     .field label {
+      color: var(--muted);
       font-size: 0.8rem;
       font-weight: 600;
-      color: var(--muted);
-      letter-spacing: 0.02em;
     }
 
     .field select,
     .field textarea {
       width: 100%;
       border: 1px solid var(--line);
-      border-radius: 14px;
+      border-radius: 10px;
       background: #fff;
       color: var(--ink);
       outline: none;
     }
 
     .field select {
-      min-height: 2.9rem;
-      padding: 0 0.9rem;
+      min-height: 2.7rem;
+      padding: 0 0.8rem;
     }
 
     .field textarea {
-      min-height: 9rem;
-      padding: 0.9rem 1rem;
+      min-height: 8.5rem;
+      padding: 0.8rem 0.9rem;
       resize: vertical;
-      line-height: 1.55;
+      line-height: 1.5;
     }
 
     .field select:focus,
     .field textarea:focus {
-      border-color: rgba(196, 92, 38, 0.55);
-      box-shadow: 0 0 0 4px rgba(196, 92, 38, 0.12);
+      border-color: #b47a84;
+      box-shadow: 0 0 0 3px rgba(107, 30, 42, 0.1);
     }
 
-    .voice-bar {
+    .voice-row {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 0.9rem;
+      gap: 0.7rem;
+      margin-bottom: 0.85rem;
     }
 
     .mic {
-      min-width: 3rem;
-      width: 3rem;
-      height: 3rem;
-      border-radius: 999px;
-      background: var(--accent);
+      width: 2.75rem;
+      height: 2.75rem;
+      border-radius: 50%;
+      background: var(--maroon);
       color: #fff;
       display: grid;
       place-items: center;
-      box-shadow: 0 10px 22px rgba(196, 92, 38, 0.28);
-      transition: transform 0.15s ease, background 0.15s ease;
+      transition: background 0.15s ease, transform 0.15s ease;
     }
 
-    .mic:hover { background: var(--accent-deep); transform: scale(1.04); }
+    .mic:hover { background: var(--maroon-deep); transform: scale(1.03); }
 
     .mic.rec {
       background: #b42318;
       animation: pulse 1.3s infinite;
     }
 
-    .mic svg {
-      width: 18px;
-      height: 18px;
-      fill: currentColor;
-    }
+    .mic svg { width: 16px; height: 16px; fill: currentColor; }
 
     @keyframes pulse {
       0% { box-shadow: 0 0 0 0 rgba(180, 35, 24, 0.35); }
-      70% { box-shadow: 0 0 0 16px rgba(180, 35, 24, 0); }
+      70% { box-shadow: 0 0 0 14px rgba(180, 35, 24, 0); }
       100% { box-shadow: 0 0 0 0 rgba(180, 35, 24, 0); }
     }
 
-    .voice-bar p {
+    .voice-row p {
       margin: 0;
       color: var(--muted);
-      font-size: 0.88rem;
+      font-size: 0.86rem;
     }
 
-    .actions {
-      display: grid;
-      gap: 0.55rem;
-      margin-top: 0.4rem;
+    .primary {
+      width: 100%;
+      min-height: 3rem;
+      border-radius: 10px;
+      background: var(--maroon);
+      color: #fff;
+      font-size: 0.98rem;
+      font-weight: 700;
+      transition: background 0.15s ease;
+    }
+
+    .primary:hover:not(:disabled) { background: var(--maroon-deep); }
+
+    .primary:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
     }
 
     .hint {
-      margin: 0;
+      margin: 0.55rem 0 0;
       text-align: center;
       color: var(--muted);
-      font-size: 0.84rem;
+      font-size: 0.82rem;
     }
 
     .result {
       margin-top: 1rem;
       padding: 1.15rem;
-      border-radius: 20px;
-      background: linear-gradient(180deg, #fff7f0, #ffffff);
-      border: 1px solid rgba(196, 92, 38, 0.22);
-      animation: rise 0.45s ease both;
+      border: 1px solid #d7b4ba;
+      border-radius: 14px;
+      background: #fffaf9;
+      animation: fade 0.4s ease both;
     }
 
     .result-top {
@@ -459,20 +362,20 @@
       justify-content: space-between;
       gap: 1rem;
       align-items: start;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.7rem;
     }
 
-    .result-top h5 {
+    .result-top h3 {
       margin: 0;
-      font-family: Syne, sans-serif;
-      font-size: 1.35rem;
-      letter-spacing: -0.02em;
+      font-family: "Source Serif 4", Georgia, serif;
+      font-size: 1.3rem;
+      line-height: 1.25;
     }
 
     .price {
       margin: 0;
-      color: var(--accent-deep);
-      font-size: 1.35rem;
+      color: var(--maroon);
+      font-size: 1.25rem;
       font-weight: 700;
       white-space: nowrap;
     }
@@ -481,182 +384,157 @@
       width: 100%;
       max-height: 200px;
       object-fit: contain;
-      border-radius: 14px;
-      margin-bottom: 0.75rem;
-      background: #f7f2ec;
+      margin-bottom: 0.7rem;
+      border-radius: 10px;
       border: 1px solid var(--line);
+      background: #fff;
     }
 
     .tags {
       display: flex;
       flex-wrap: wrap;
       gap: 0.4rem;
-      margin-bottom: 0.7rem;
+      margin-bottom: 0.65rem;
     }
 
     .tag {
-      padding: 0.3rem 0.65rem;
+      padding: 0.28rem 0.6rem;
       border-radius: 999px;
-      background: var(--indigo-soft);
-      color: var(--indigo);
-      font-size: 0.75rem;
-      font-weight: 600;
+      background: #f3e6e8;
+      color: var(--maroon);
+      font-size: 0.74rem;
+      font-weight: 700;
     }
 
     .desc {
       margin: 0;
-      color: #3a3545;
+      color: #3f3a36;
+      font-size: 0.94rem;
       line-height: 1.6;
-      font-size: 0.95rem;
       white-space: pre-wrap;
     }
 
     footer {
-      margin-top: 2.25rem;
-      text-align: center;
+      margin-top: 1.75rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.5rem 1rem;
       color: var(--muted);
-      font-size: 0.9rem;
+      font-size: 0.84rem;
     }
 
     footer strong { color: var(--ink); }
 
     .hidden { display: none !important; }
 
-    @media (max-width: 900px) {
-      .hero {
-        grid-template-columns: 1fr;
-        min-height: auto;
-        gap: 1.5rem;
-        padding-top: 0.5rem;
-      }
-
-      .hero-visual { min-height: 240px; order: -1; }
-
-      .brand { font-size: clamp(2.8rem, 14vw, 4rem); }
-
+    @media (max-width: 800px) {
       .panel { grid-template-columns: 1fr; }
-
-      .workspace-head {
-        flex-direction: column;
-        align-items: start;
-      }
+      .pane + .pane { border-left: 0; border-top: 1px solid var(--line); }
+      .logo-link img { height: 40px; }
+      .top-meta { font-size: 0.75rem; }
+      .intro h1 { max-width: none; }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header class="hero">
-      <div class="hero-copy">
-        <p class="brand">Artisan <em>AI</em></p>
-        <h2>Listings that sound like your craft.</h2>
-        <p>
-          Photo in. Voice or text in your language. A clean product listing out —
-          ready to share online.
-        </p>
-        <div class="cta-row">
-          <a class="btn btn-primary" href="#workspace">Start listing</a>
-          <span class="btn-quiet">Hindi · English · Hinglish</span>
-        </div>
-        <p class="credit">Designed &amp; built by <strong>Pranjal Sharma</strong></p>
-      </div>
-
-      <div class="hero-visual" aria-hidden="true">
-        <div class="loom">
-          <span></span><span></span><span></span><span></span>
-          <span></span><span></span><span></span><span></span>
-          <span></span><span></span><span></span><span></span>
-          <span></span><span></span><span></span><span></span>
-          <span></span><span></span><span></span><span></span>
-          <span></span><span></span><span></span><span></span>
-        </div>
-        <p class="visual-caption">Craft-first listing assistant for makers</p>
+  <div class="page">
+    <header class="topbar">
+      <a class="logo-link" href="https://vitap.ac.in/" target="_blank" rel="noopener noreferrer" aria-label="VIT-AP University">
+        <img src="./vit-ap-logo.png" alt="VIT-AP University" />
+      </a>
+      <div class="top-meta">
+        <strong>Pranjal Sharma</strong>
+        Student project · VIT-AP University
       </div>
     </header>
 
-    <section class="workspace" id="workspace">
-      <div class="workspace-head">
-        <div>
-          <h3>Create a listing</h3>
-          <p>Two inputs. One generated product page draft.</p>
-        </div>
-        <div class="steps" aria-label="Progress">
-          <span class="step" id="step-photo"><b>1</b>Photo</span>
-          <span class="step" id="step-voice"><b>2</b>Details</span>
-          <span class="step" id="step-listing"><b>3</b>Listing</span>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="pane">
-          <h4>Product photo</h4>
-          <p class="sub">Clear frame, natural light works best</p>
-
-          <input id="photo-input" type="file" accept="image/*" capture="environment" hidden />
-
-          <button class="drop" id="photo-upload" type="button">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 16V6" />
-              <path d="M8 10l4-4 4 4" />
-              <path d="M4 18h16" />
-            </svg>
-            <strong>Upload photo</strong>
-            <span>PNG or JPG</span>
-          </button>
-
-          <div class="preview hidden" id="photo-preview">
-            <img id="photo-img" alt="Product preview" />
-            <button class="btn btn-quiet" id="remove-photo" type="button" style="justify-self:start;color:var(--accent-deep)">
-              Remove photo
-            </button>
-          </div>
-        </div>
-
-        <div class="pane">
-          <h4>Description</h4>
-          <p class="sub">Speak naturally, or type the details</p>
-
-          <div class="field">
-            <label for="language">Language</label>
-            <select id="language">
-              <option value="hi-IN">Hindi</option>
-              <option value="en-IN">English</option>
-              <option value="hi-IN">Hinglish</option>
-            </select>
-          </div>
-
-          <div class="voice-bar">
-            <button class="mic" id="mic-button" type="button" aria-label="Record voice">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v5a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V21h2v-3.1A7 7 0 0 0 19 11h-2z"/></svg>
-            </button>
-            <p id="record-hint">Tap mic to describe your craft</p>
-          </div>
-
-          <div class="field">
-            <label for="transcript">Product details</label>
-            <textarea id="transcript" placeholder="Material, size, use, and what makes it special..."></textarea>
-          </div>
-
-          <div class="actions">
-            <button class="btn btn-primary" id="generate-button" type="button" disabled>
-              Generate listing
-            </button>
-            <p class="hint" id="generate-hint">Add a photo and description to continue.</p>
-          </div>
-        </div>
-      </div>
-
-      <section class="result hidden" id="listing-card">
-        <div class="result-top">
-          <h5 id="listing-title">Listing</h5>
-          <p class="price" id="listing-price"></p>
-        </div>
-        <img class="hidden" id="listing-photo" alt="Product" />
-        <div class="tags" id="listing-tags"></div>
-        <p class="desc" id="listing-desc"></p>
-      </section>
+    <section class="intro">
+      <p class="eyebrow">Product listing assistant</p>
+      <h1>Create clear product listings from a photo and a short description.</h1>
+      <p>
+        Upload an image of your handmade product, describe it in Hindi or English,
+        and generate a title, tags, price suggestion, and listing copy.
+      </p>
     </section>
 
-    <footer>Artisan AI · <strong>Pranjal Sharma</strong></footer>
+    <div class="progress" aria-label="Progress">
+      <span id="step-photo"><b>1</b> Photo</span>
+      <span id="step-voice"><b>2</b> Description</span>
+      <span id="step-listing"><b>3</b> Listing</span>
+    </div>
+
+    <main class="panel" id="workspace">
+      <section class="pane">
+        <h2>Product photo</h2>
+        <p class="sub">Use a clear photo with natural light</p>
+
+        <input id="photo-input" type="file" accept="image/*" capture="environment" hidden />
+
+        <button class="drop" id="photo-upload" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 16V6" />
+            <path d="M8 10l4-4 4 4" />
+            <path d="M4 18h16" />
+          </svg>
+          <strong>Upload photo</strong>
+          <span>PNG or JPG</span>
+        </button>
+
+        <div class="preview hidden" id="photo-preview">
+          <img id="photo-img" alt="Product preview" />
+          <button class="linkish" id="remove-photo" type="button">Remove photo</button>
+        </div>
+      </section>
+
+      <section class="pane">
+        <h2>Description</h2>
+        <p class="sub">Speak with your microphone, or type the details</p>
+
+        <div class="field">
+          <label for="language">Language</label>
+          <select id="language">
+            <option value="hi-IN">Hindi</option>
+            <option value="en-IN">English</option>
+            <option value="hi-IN">Hinglish</option>
+          </select>
+        </div>
+
+        <div class="voice-row">
+          <button class="mic" id="mic-button" type="button" aria-label="Start voice input">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v5a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V21h2v-3.1A7 7 0 0 0 19 11h-2z"/></svg>
+          </button>
+          <p id="record-hint">Tap the microphone to describe your product</p>
+        </div>
+
+        <div class="field">
+          <label for="transcript">Product details</label>
+          <textarea id="transcript" placeholder="Material, size, use, and what makes it special..."></textarea>
+        </div>
+
+        <button class="primary" id="generate-button" type="button" disabled>
+          Generate listing
+        </button>
+        <p class="hint" id="generate-hint">Add a photo and a description to continue.</p>
+      </section>
+    </main>
+
+    <section class="result hidden" id="listing-card">
+      <div class="result-top">
+        <h3 id="listing-title">Listing</h3>
+        <p class="price" id="listing-price"></p>
+      </div>
+      <img class="hidden" id="listing-photo" alt="Product" />
+      <div class="tags" id="listing-tags"></div>
+      <p class="desc" id="listing-desc"></p>
+    </section>
+
+    <footer>
+      <span>Built by <strong>Pranjal Sharma</strong></span>
+      <span>VIT-AP University</span>
+    </footer>
   </div>
 
   <script>
@@ -697,7 +575,7 @@
         generateButton.disabled = !ready;
         generateHint.textContent = ready
           ? "Ready to generate your listing."
-          : "Add a photo and description to continue.";
+          : "Add a photo and a description to continue.";
       }
 
       function hideListing() {
@@ -711,7 +589,7 @@
         language.disabled = state.isRecording;
         recordHint.textContent = state.isRecording
           ? "Listening… tap again to stop"
-          : (SR ? "Tap mic to describe your craft" : "Voice unavailable — type instead");
+          : (SR ? "Tap the microphone to describe your product" : "Voice unavailable — please type instead");
       }
 
       photoUpload.onclick = function () { photoInput.click(); };
@@ -739,7 +617,6 @@
         previewUrl = null;
         photoImg.removeAttribute("src");
         photoUpload.classList.remove("hidden");
-        photoPreview.classList.remove("hidden");
         photoPreview.classList.add("hidden");
         hideListing();
         updateUI();
@@ -781,8 +658,8 @@
           state.isRecording = false;
           setRecUI();
           alert(event.error === "not-allowed"
-            ? "Microphone blocked. Allow access or type instead."
-            : "Speech failed. Try again or type below.");
+            ? "Microphone access was blocked. Allow access, or type instead."
+            : "Speech recognition failed. Please try again or type below.");
         };
         recognition.onend = function () {
           state.isRecording = false;
@@ -793,7 +670,7 @@
           hideListing();
           updateUI();
         };
-        try { recognition.start(); } catch (e) { alert("Could not start microphone."); }
+        try { recognition.start(); } catch (e) { alert("Could not start the microphone."); }
       }
 
       function stopRec() {
@@ -810,7 +687,7 @@
         if (!state.hasPhoto || !state.transcript.trim()) return;
         var clean = state.transcript.trim();
         var first = clean.split(/[.।!?]/)[0].trim();
-        var title = first.length > 6 ? first.slice(0, 64) : "Handmade Artisan Craft";
+        var title = first.length > 6 ? first.slice(0, 64) : "Handmade Product";
         var words = clean.toLowerCase();
         var tags = ["Handmade"];
         if (/diya|दीया|lamp|candle/.test(words)) tags.push("Festive");
