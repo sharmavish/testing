@@ -472,8 +472,47 @@
       font-size: 0.84rem;
     }
 
+    .listings {
+      margin-top: 1.5rem;
+    }
+
+    .listings-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 1rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .listings-head h2 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .listings-head p {
+      margin: 0.25rem 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .listings-empty {
+      padding: 1.4rem;
+      border: 1px dashed var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.55);
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    .listings-stack {
+      display: grid;
+      gap: 1rem;
+    }
+
     .result {
-      margin-top: 1.25rem;
       border-radius: 24px;
       border: 1px solid var(--line);
       background: var(--panel);
@@ -512,7 +551,7 @@
 
     .result-media {
       position: relative;
-      min-height: 280px;
+      min-height: 260px;
       background:
         radial-gradient(circle at 30% 20%, rgba(122, 31, 46, 0.08), transparent 45%),
         #f3eee8;
@@ -546,7 +585,7 @@
     .result-top h3 {
       margin: 0;
       font-family: Newsreader, Georgia, serif;
-      font-size: 1.55rem;
+      font-size: 1.45rem;
       font-weight: 600;
       letter-spacing: -0.02em;
       line-height: 1.2;
@@ -558,7 +597,7 @@
       border-radius: 999px;
       background: rgba(122, 31, 46, 0.08);
       color: var(--maroon);
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       font-weight: 800;
       white-space: nowrap;
     }
@@ -743,7 +782,7 @@
       <div class="workspace-head">
         <div>
           <h2>Create listing</h2>
-          <p>Two inputs. One ready draft.</p>
+          <p>Add multiple products — each one is saved below.</p>
         </div>
         <div class="steps" aria-label="Progress">
           <span id="step-photo"><b>1</b>Photo</span>
@@ -800,45 +839,27 @@
           </div>
 
           <button class="btn btn-main" id="generate-button" type="button" disabled style="width:100%;border-radius:12px">
-            Generate listing
+            Add product listing
           </button>
           <p class="hint" id="generate-hint">Add a photo and a description to continue.</p>
+          <button class="btn btn-soft hidden" id="clear-inputs" type="button" style="width:100%;margin-top:0.55rem;border-radius:12px">
+            Clear current inputs
+          </button>
         </div>
       </div>
 
-      <section class="result hidden" id="listing-card">
-        <div class="result-badge">
-          <strong>Listing ready</strong>
-          <span>Marketplace draft</span>
-        </div>
-        <div class="result-body">
-          <div class="result-media">
-            <img class="hidden" id="listing-photo" alt="Product" />
+      <section class="listings" id="listings-section">
+        <div class="listings-head">
+          <div>
+            <h2>Your products</h2>
+            <p id="listings-count">No listings yet</p>
           </div>
-          <div class="result-content">
-            <div class="result-top">
-              <h3 id="listing-title">Listing</h3>
-              <p class="price" id="listing-price"></p>
-            </div>
-            <div class="tags" id="listing-tags"></div>
-            <p class="desc-label">Description</p>
-            <p class="desc" id="listing-desc"></p>
-            <div class="result-meta">
-              <div class="meta-item">
-                <span>Category</span>
-                <strong id="listing-category">Handmade</strong>
-              </div>
-              <div class="meta-item">
-                <span>Condition</span>
-                <strong>New · Handmade</strong>
-              </div>
-            </div>
-            <div class="result-actions">
-              <button class="btn btn-danger" id="delete-listing" type="button">Delete listing</button>
-              <button class="btn btn-soft" id="clear-all" type="button">Clear all inputs</button>
-            </div>
-          </div>
+          <button class="btn btn-soft hidden" id="delete-all-listings" type="button">Delete all listings</button>
         </div>
+        <div class="listings-empty" id="listings-empty">
+          Generate a listing to start building your product catalog.
+        </div>
+        <div class="listings-stack" id="listings-stack"></div>
       </section>
     </section>
 
@@ -850,8 +871,10 @@
 
   <script>
     (function () {
+      var STORAGE_KEY = "listing-studio-products-v1";
       var state = { hasPhoto: false, transcript: "", isRecording: false };
-      var recognition = null, previewUrl = null, finalTranscript = "";
+      var listings = [];
+      var recognition = null, previewUrl = null, finalTranscript = "", photoDataUrl = "";
 
       var photoInput = document.getElementById("photo-input");
       var photoUpload = document.getElementById("photo-upload");
@@ -864,16 +887,30 @@
       var transcript = document.getElementById("transcript");
       var generateButton = document.getElementById("generate-button");
       var generateHint = document.getElementById("generate-hint");
-      var listingCard = document.getElementById("listing-card");
-      var listingTitle = document.getElementById("listing-title");
-      var listingPrice = document.getElementById("listing-price");
-      var listingTags = document.getElementById("listing-tags");
-      var listingDesc = document.getElementById("listing-desc");
-      var listingPhoto = document.getElementById("listing-photo");
-      var listingCategory = document.getElementById("listing-category");
-      var deleteListing = document.getElementById("delete-listing");
-      var clearAll = document.getElementById("clear-all");
+      var clearInputs = document.getElementById("clear-inputs");
+      var listingsStack = document.getElementById("listings-stack");
+      var listingsEmpty = document.getElementById("listings-empty");
+      var listingsCount = document.getElementById("listings-count");
+      var deleteAllListings = document.getElementById("delete-all-listings");
       var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+      function loadListings() {
+        try {
+          var raw = localStorage.getItem(STORAGE_KEY);
+          listings = raw ? JSON.parse(raw) : [];
+          if (!Array.isArray(listings)) listings = [];
+        } catch (e) {
+          listings = [];
+        }
+      }
+
+      function saveListings() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(listings));
+        } catch (e) {
+          /* storage full or blocked */
+        }
+      }
 
       function setStep(id, on) {
         var el = document.getElementById(id);
@@ -884,29 +921,81 @@
       function updateUI() {
         setStep("step-photo", state.hasPhoto);
         setStep("step-voice", !!state.transcript.trim());
-        setStep("step-listing", !listingCard.classList.contains("hidden"));
+        setStep("step-listing", listings.length > 0);
         var ready = state.hasPhoto && !!state.transcript.trim();
         generateButton.disabled = !ready;
         generateHint.textContent = ready
-          ? "Ready to generate your listing."
+          ? "This will add a new product to your catalog."
           : "Add a photo and a description to continue.";
+        clearInputs.classList.toggle("hidden", !state.hasPhoto && !state.transcript.trim());
+        renderListings();
       }
 
-      function hideListing() {
-        listingCard.classList.add("hidden");
-        listingTitle.textContent = "Listing";
-        listingPrice.textContent = "";
-        listingDesc.textContent = "";
-        listingTags.innerHTML = "";
-        listingCategory.textContent = "Handmade";
-        listingPhoto.removeAttribute("src");
-        listingPhoto.classList.add("hidden");
-        updateUI();
+      function escapeHtml(text) {
+        return String(text)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function renderListings() {
+        var count = listings.length;
+        listingsCount.textContent = count === 0
+          ? "No listings yet"
+          : count === 1
+            ? "1 product saved"
+            : count + " products saved";
+        listingsEmpty.classList.toggle("hidden", count > 0);
+        deleteAllListings.classList.toggle("hidden", count === 0);
+        listingsStack.innerHTML = "";
+
+        listings.forEach(function (item, index) {
+          var card = document.createElement("article");
+          card.className = "result";
+          card.dataset.id = item.id;
+
+          var tagsHtml = (item.tags || []).map(function (t) {
+            return '<span class="tag">' + escapeHtml(t) + "</span>";
+          }).join("");
+
+          card.innerHTML =
+            '<div class="result-badge">' +
+              "<strong>Product " + (count - index) + "</strong>" +
+              "<span>" + escapeHtml(item.category || "Handmade") + "</span>" +
+            "</div>" +
+            '<div class="result-body">' +
+              '<div class="result-media">' +
+                (item.image
+                  ? '<img src="' + item.image + '" alt="' + escapeHtml(item.title) + '" />'
+                  : "") +
+              "</div>" +
+              '<div class="result-content">' +
+                '<div class="result-top">' +
+                  "<h3>" + escapeHtml(item.title) + "</h3>" +
+                  '<p class="price">' + escapeHtml(item.price) + "</p>" +
+                "</div>" +
+                '<div class="tags">' + tagsHtml + "</div>" +
+                '<p class="desc-label">Description</p>' +
+                '<p class="desc">' + escapeHtml(item.description) + "</p>" +
+                '<div class="result-meta">' +
+                  '<div class="meta-item"><span>Category</span><strong>' + escapeHtml(item.category) + "</strong></div>" +
+                  '<div class="meta-item"><span>Condition</span><strong>New � Handmade</strong></div>' +
+                "</div>" +
+                '<div class="result-actions">' +
+                  '<button class="btn btn-danger" type="button" data-delete="' + item.id + '">Delete listing</button>' +
+                "</div>" +
+              "</div>" +
+            "</div>";
+
+          listingsStack.appendChild(card);
+        });
       }
 
       function clearPhoto() {
         state.hasPhoto = false;
         photoInput.value = "";
+        photoDataUrl = "";
         if (previewUrl) URL.revokeObjectURL(previewUrl);
         previewUrl = null;
         photoImg.removeAttribute("src");
@@ -920,18 +1009,84 @@
         finalTranscript = "";
       }
 
+      function resetFormForNextProduct() {
+        clearPhoto();
+        clearDescription();
+        updateUI();
+      }
+
+      function fileToDataUrl(file) {
+        return new Promise(function (resolve, reject) {
+          var reader = new FileReader();
+          reader.onload = function () { resolve(reader.result); };
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function buildListing(clean, image) {
+        var first = clean.split(/[.?!?]/)[0].trim();
+        var title = first.length > 6 ? first.slice(0, 64) : "Handmade Product";
+        var words = clean.toLowerCase();
+        var tags = ["Handmade"];
+        var category = "Handmade crafts";
+        if (/diya|????|lamp|candle|macrame|macram�|keychain|feather/.test(words)) {
+          tags.push("Home decor");
+          category = "Home decor";
+        }
+        if (/pottery|??????|clay|ceramic/.test(words)) {
+          tags.push("Pottery");
+          category = "Pottery";
+        }
+        if (/silk|?????|fabric|?????|saree|textile/.test(words)) {
+          tags.push("Textile");
+          category = "Textiles";
+        }
+        if (/wood|?????|bamboo/.test(words)) {
+          tags.push("Woodwork");
+          category = "Woodwork";
+        }
+        if (/jewelry|jewellery|????|necklace|earring/.test(words)) {
+          tags.push("Jewellery");
+          category = "Jewellery";
+        }
+        if (/gift|?????|present/.test(words)) tags.push("Gift ready");
+
+        var price = 499;
+        if (clean.length > 80) price = 799;
+        if (clean.length > 140) price = 1299;
+        if (/silk|?????|silver|gold|????|macrame|macram�/.test(words)) price += 300;
+
+        var desc = clean;
+        if (desc.length < 40) {
+          desc += "\n\nCarefully handmade and finished for everyday use or thoughtful gifting.";
+        } else {
+          desc += "\n\nEach piece is made by hand, so small variations add to its character.";
+        }
+
+        return {
+          id: "p-" + Date.now() + "-" + Math.floor(Math.random() * 1000),
+          title: title,
+          price: "?" + price.toLocaleString("en-IN"),
+          tags: tags.slice(0, 4),
+          category: category,
+          description: desc,
+          image: image || ""
+        };
+      }
+
       function setRecUI() {
         if (state.isRecording) micButton.classList.add("rec");
         else micButton.classList.remove("rec");
         language.disabled = state.isRecording;
         recordHint.textContent = state.isRecording
-          ? "Listening… tap again to stop"
-          : (SR ? "Tap the microphone to describe your product" : "Voice unavailable — please type instead");
+          ? "Listening� tap again to stop"
+          : (SR ? "Tap the microphone to describe your product" : "Voice unavailable � please type instead");
       }
 
       photoUpload.onclick = function () { photoInput.click(); };
 
-      photoInput.onchange = function () {
+      photoInput.onchange = async function () {
         var file = photoInput.files && photoInput.files[0];
         if (!file || file.type.indexOf("image/") !== 0) {
           alert("Please choose an image file.");
@@ -940,33 +1095,47 @@
         if (previewUrl) URL.revokeObjectURL(previewUrl);
         previewUrl = URL.createObjectURL(file);
         photoImg.src = previewUrl;
+        try {
+          photoDataUrl = await fileToDataUrl(file);
+        } catch (e) {
+          photoDataUrl = "";
+        }
         state.hasPhoto = true;
         photoUpload.classList.add("hidden");
         photoPreview.classList.remove("hidden");
-        hideListing();
         updateUI();
       };
 
       removePhoto.onclick = function () {
         clearPhoto();
-        hideListing();
         updateUI();
       };
 
-      deleteListing.onclick = function () {
-        hideListing();
-      };
-
-      clearAll.onclick = function () {
+      clearInputs.onclick = function () {
         clearPhoto();
         clearDescription();
-        hideListing();
         updateUI();
       };
 
       transcript.oninput = function () {
         state.transcript = transcript.value;
-        hideListing();
+        updateUI();
+      };
+
+      listingsStack.addEventListener("click", function (event) {
+        var btn = event.target.closest("[data-delete]");
+        if (!btn) return;
+        var id = btn.getAttribute("data-delete");
+        listings = listings.filter(function (item) { return item.id !== id; });
+        saveListings();
+        updateUI();
+      });
+
+      deleteAllListings.onclick = function () {
+        if (!listings.length) return;
+        if (!confirm("Delete all saved product listings?")) return;
+        listings = [];
+        saveListings();
         updateUI();
       };
 
@@ -1009,7 +1178,6 @@
           var text = (finalTranscript || transcript.value).trim();
           state.transcript = text;
           transcript.value = text;
-          hideListing();
           updateUI();
         };
         try { recognition.start(); } catch (e) { alert("Could not start the microphone."); }
@@ -1028,67 +1196,15 @@
       generateButton.onclick = function () {
         if (!state.hasPhoto || !state.transcript.trim()) return;
         var clean = state.transcript.trim();
-        var first = clean.split(/[.।!?]/)[0].trim();
-        var title = first.length > 6 ? first.slice(0, 64) : "Handmade Product";
-        var words = clean.toLowerCase();
-        var tags = ["Handmade"];
-        var category = "Handmade crafts";
-        if (/diya|दीया|lamp|candle|macrame|macramé|keychain|feather/.test(words)) {
-          tags.push("Home decor");
-          category = "Home decor";
-        }
-        if (/pottery|मिट्टी|clay|ceramic/.test(words)) {
-          tags.push("Pottery");
-          category = "Pottery";
-        }
-        if (/silk|सिल्क|fabric|कपड़ा|saree|textile/.test(words)) {
-          tags.push("Textile");
-          category = "Textiles";
-        }
-        if (/wood|लकड़ी|bamboo/.test(words)) {
-          tags.push("Woodwork");
-          category = "Woodwork";
-        }
-        if (/jewelry|jewellery|गहना|necklace|earring/.test(words)) {
-          tags.push("Jewellery");
-          category = "Jewellery";
-        }
-        if (/gift|गिफ्ट|present/.test(words)) tags.push("Gift ready");
-
-        var price = 499;
-        if (clean.length > 80) price = 799;
-        if (clean.length > 140) price = 1299;
-        if (/silk|सिल्क|silver|gold|सोना|macrame|macramé/.test(words)) price += 300;
-
-        var desc = clean;
-        if (desc.length < 40) {
-          desc += "\n\nCarefully handmade and finished for everyday use or thoughtful gifting.";
-        } else {
-          desc += "\n\nEach piece is made by hand, so small variations add to its character.";
-        }
-
-        listingTitle.textContent = title;
-        listingPrice.textContent = "₹" + price.toLocaleString("en-IN");
-        listingDesc.textContent = desc;
-        listingCategory.textContent = category;
-        listingTags.innerHTML = "";
-        tags.slice(0, 4).forEach(function (t) {
-          var s = document.createElement("span");
-          s.className = "tag";
-          s.textContent = t;
-          listingTags.appendChild(s);
-        });
-        if (previewUrl) {
-          listingPhoto.src = previewUrl;
-          listingPhoto.classList.remove("hidden");
-        } else {
-          listingPhoto.classList.add("hidden");
-        }
-        listingCard.classList.remove("hidden");
-        updateUI();
-        listingCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        var image = photoDataUrl || photoImg.src || "";
+        var item = buildListing(clean, image);
+        listings.unshift(item);
+        saveListings();
+        resetFormForNextProduct();
+        document.getElementById("listings-section").scrollIntoView({ behavior: "smooth", block: "start" });
       };
 
+      loadListings();
       updateUI();
       setRecUI();
     })();
