@@ -125,7 +125,10 @@
   }
 
   function getJsPdf() {
-    if (window.jspdf && window.jspdf.jsPDF) return window.jspdf.jsPDF;
+    if (window.jspdf && typeof window.jspdf.jsPDF === "function") {
+      return window.jspdf.jsPDF;
+    }
+    if (typeof window.jsPDF === "function") return window.jsPDF;
     return null;
   }
 
