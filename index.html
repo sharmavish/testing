@@ -398,7 +398,8 @@
     }
 
     .field select,
-    .field textarea {
+    .field textarea,
+    .field input[type="number"] {
       width: 100%;
       border: 1px solid var(--line);
       border-radius: 12px;
@@ -419,8 +420,14 @@
       line-height: 1.55;
     }
 
+    .field input[type="number"] {
+      min-height: 2.85rem;
+      padding: 0 0.9rem;
+    }
+
     .field select:focus,
-    .field textarea:focus {
+    .field textarea:focus,
+    .field input[type="number"]:focus {
       border-color: rgba(122, 31, 46, 0.45);
       box-shadow: 0 0 0 4px rgba(122, 31, 46, 0.1);
     }
@@ -629,34 +636,6 @@
       overflow: hidden;
     }
 
-    .result-meta {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.45rem;
-    }
-
-    .meta-item {
-      padding: 0.55rem 0.65rem;
-      border-radius: 10px;
-      background: var(--soft);
-      border: 1px solid var(--line);
-    }
-
-    .meta-item span {
-      display: block;
-      color: var(--muted);
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-      margin-bottom: 0.15rem;
-    }
-
-    .meta-item strong {
-      font-size: 0.82rem;
-      font-weight: 700;
-    }
-
     .result-actions {
       display: flex;
       flex-wrap: wrap;
@@ -825,10 +804,15 @@
             <textarea id="transcript" placeholder="Material, size, use, and what makes it special..."></textarea>
           </div>
 
+          <div class="field">
+            <label for="price-input">Price (?) *</label>
+            <input id="price-input" type="number" min="1" step="1" placeholder="Enter price" required />
+          </div>
+
           <button class="btn btn-main" id="generate-button" type="button" disabled style="width:100%;border-radius:12px">
             Add product listing
           </button>
-          <p class="hint" id="generate-hint">Add a photo and a description to continue.</p>
+          <p class="hint" id="generate-hint">Add a photo, description, and price to continue.</p>
           <button class="btn btn-soft hidden" id="clear-inputs" type="button" style="width:100%;margin-top:0.55rem;border-radius:12px">
             Clear current inputs
           </button>
@@ -873,6 +857,7 @@
       var micButton = document.getElementById("mic-button");
       var recordHint = document.getElementById("record-hint");
       var transcript = document.getElementById("transcript");
+      var priceInput = document.getElementById("price-input");
       var generateButton = document.getElementById("generate-button");
       var generateHint = document.getElementById("generate-hint");
       var clearInputs = document.getElementById("clear-inputs");
@@ -908,13 +893,26 @@
         setStep("step-photo", state.hasPhoto);
         setStep("step-voice", !!state.transcript.trim());
         setStep("step-listing", listings.length > 0);
-        var ready = state.hasPhoto && !!state.transcript.trim();
+        var priceOk = isValidPrice(priceInput.value);
+        var ready = state.hasPhoto && !!state.transcript.trim() && priceOk;
         generateButton.disabled = !ready;
-        generateHint.textContent = ready
-          ? "Adds this product to your catalog. Then you can add another."
-          : "Add a photo and a description to continue.";
-        clearInputs.classList.toggle("hidden", !state.hasPhoto && !state.transcript.trim());
+        if (!state.hasPhoto || !state.transcript.trim()) {
+          generateHint.textContent = "Add a photo, description, and price to continue.";
+        } else if (!priceOk) {
+          generateHint.textContent = "Enter a valid price (required).";
+        } else {
+          generateHint.textContent = "Adds this product to your catalog. Then you can add another.";
+        }
+        clearInputs.classList.toggle(
+          "hidden",
+          !state.hasPhoto && !state.transcript.trim() && !String(priceInput.value || "").trim()
+        );
         renderListings();
+      }
+
+      function isValidPrice(value) {
+        var n = Number(value);
+        return Number.isFinite(n) && n >= 1;
       }
 
       function escapeHtml(text) {
@@ -928,7 +926,7 @@
       function renderListings() {
         var count = listings.length;
         listingsCount.textContent = count === 0
-          ? "No listings yet — add your first product above"
+          ? "No listings yet ? add your first product above"
           : count === 1
             ? "1 product in your catalog"
             : count + " products in your catalog";
@@ -955,12 +953,8 @@
                 "<h3>" + escapeHtml(item.title) + "</h3>" +
                 '<p class="price">' + escapeHtml(item.price) + "</p>" +
               "</div>" +
-              '<div class="tags">' + tagsHtml + "</div>" +
+              (tagsHtml ? '<div class="tags">' + tagsHtml + "</div>" : "") +
               '<p class="desc">' + escapeHtml(shortDesc) + "</p>" +
-              '<div class="result-meta">' +
-                '<div class="meta-item"><span>Category</span><strong>' + escapeHtml(item.category) + "</strong></div>" +
-                '<div class="meta-item"><span>Condition</span><strong>New</strong></div>' +
-              "</div>" +
               '<div class="result-actions">' +
                 '<button class="btn btn-danger" type="button" data-delete="' + item.id + '">Delete</button>' +
               "</div>" +
@@ -987,9 +981,14 @@
         finalTranscript = "";
       }
 
+      function clearPrice() {
+        priceInput.value = "";
+      }
+
       function resetFormForNextProduct() {
         clearPhoto();
         clearDescription();
+        clearPrice();
         updateUI();
       }
 
@@ -1002,53 +1001,30 @@
         });
       }
 
-      function buildListing(clean, image) {
+      function buildListing(clean, image, priceValue) {
         var first = clean.split(/[.?!]/)[0].trim().split("\u0964")[0].trim();
-        var title = first.length > 6 ? first.slice(0, 64) : "Handmade Product";
+        var title = first.length > 6 ? first.slice(0, 64) : "Product listing";
         var words = clean.toLowerCase();
-        var tags = ["Handmade"];
-        var category = "Handmade crafts";
+        var tags = [];
 
-        if (/diya|lamp|candle|macrame|keychain|feather|\u0926\u0940\u092f\u093e/.test(words)) {
-          tags.push("Home decor");
-          category = "Home decor";
-        }
-        if (/pottery|clay|ceramic|\u092e\u093f\u091f\u094d\u091f\u0940/.test(words)) {
-          tags.push("Pottery");
-          category = "Pottery";
-        }
-        if (/silk|fabric|saree|textile|\u0938\u093f\u0932\u094d\u0915|\u0915\u092a\u0921\u093c\u093e/.test(words)) {
-          tags.push("Textile");
-          category = "Textiles";
-        }
-        if (/wood|bamboo|\u0932\u0915\u0921\u093c\u0940/.test(words)) {
-          tags.push("Woodwork");
-          category = "Woodwork";
-        }
-        if (/jewelry|jewellery|necklace|earring|\u0917\u0939\u0928\u093e/.test(words)) {
-          tags.push("Jewellery");
-          category = "Jewellery";
-        }
-        if (/gift|present|\u0917\u093f\u092b\u094d\u091f/.test(words)) tags.push("Gift ready");
+        if (/diya|lamp|candle|macrame|keychain|feather|\u0926\u0940\u092f\u093e/.test(words)) tags.push("Home decor");
+        if (/pottery|clay|ceramic|\u092e\u093f\u091f\u094d\u091f\u0940/.test(words)) tags.push("Pottery");
+        if (/silk|fabric|saree|textile|\u0938\u093f\u0932\u094d\u0915|\u0915\u092a\u0921\u093c\u093e/.test(words)) tags.push("Textile");
+        if (/wood|bamboo|\u0932\u0915\u0921\u093c\u0940/.test(words)) tags.push("Woodwork");
+        if (/jewelry|jewellery|necklace|earring|\u0917\u0939\u0928\u093e/.test(words)) tags.push("Jewellery");
+        if (/gift|present|\u0917\u093f\u092b\u094d\u091f/.test(words)) tags.push("Gift");
 
-        var price = 499;
-        if (clean.length > 80) price = 799;
-        if (clean.length > 140) price = 1299;
-        if (/silk|silver|gold|macrame|\u0938\u093f\u0932\u094d\u0915|\u0938\u094b\u0928\u093e/.test(words)) price += 300;
-
+        var amount = Math.round(Number(priceValue));
         var desc = clean;
         if (desc.length < 40) {
-          desc += "\n\nCarefully handmade and finished for everyday use or thoughtful gifting.";
-        } else {
-          desc += "\n\nEach piece is made by hand, so small variations add to its character.";
+          desc += "\n\nCarefully finished for everyday use or thoughtful gifting.";
         }
 
         return {
           id: "p-" + Date.now() + "-" + Math.floor(Math.random() * 1000),
           title: title,
-          price: "\u20b9" + price.toLocaleString("en-IN"),
-          tags: tags.slice(0, 4),
-          category: category,
+          price: "\u20b9" + amount.toLocaleString("en-IN"),
+          tags: tags.slice(0, 3),
           description: desc,
           image: image || ""
         };
@@ -1090,11 +1066,16 @@
       clearInputs.onclick = function () {
         clearPhoto();
         clearDescription();
+        clearPrice();
         updateUI();
       };
 
       transcript.oninput = function () {
         state.transcript = transcript.value;
+        updateUI();
+      };
+
+      priceInput.oninput = function () {
         updateUI();
       };
 
@@ -1170,8 +1151,15 @@
       };
 
       generateButton.onclick = function () {
-        if (!state.hasPhoto || !state.transcript.trim()) return;
-        var item = buildListing(state.transcript.trim(), photoDataUrl || photoImg.src || "");
+        if (!state.hasPhoto || !state.transcript.trim() || !isValidPrice(priceInput.value)) {
+          generateHint.textContent = "Photo, description, and price are all required.";
+          return;
+        }
+        var item = buildListing(
+          state.transcript.trim(),
+          photoDataUrl || photoImg.src || "",
+          priceInput.value
+        );
         listings.unshift(item);
         saveListings();
         resetFormForNextProduct();
