@@ -553,20 +553,6 @@
       display: block;
     }
 
-    .result-num {
-      position: absolute;
-      top: 0.4rem;
-      left: 0.4rem;
-      z-index: 1;
-      padding: 0.18rem 0.45rem;
-      border-radius: 6px;
-      background: rgba(20, 18, 26, 0.78);
-      color: #fff;
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-    }
-
     .result-content {
       min-width: 0;
       display: grid;
@@ -831,7 +817,7 @@
 
   <script>
     (function () {
-      var STORAGE_KEY = "listing-studio-products-v3";
+      var STORAGE_KEY = "listing-studio-products-v4";
       var state = { hasPhoto: false, transcript: "", isRecording: false };
       var listings = [];
       var recognition = null, previewUrl = null, finalTranscript = "", photoDataUrl = "";
@@ -922,21 +908,25 @@
         deleteAllListings.classList.toggle("hidden", count === 0);
         listingsStack.innerHTML = "";
 
-        listings.forEach(function (item, index) {
+        listings.forEach(function (item) {
           var card = document.createElement("article");
           card.className = "result";
           card.dataset.id = item.id;
 
           var title = String(item.title || "Product").trim();
-          var desc = String(item.description || "").split("\n\n")[0].trim();
-          // Avoid repeating the same text under the title.
-          if (!desc || desc.toLowerCase() === title.toLowerCase()) {
-            desc = "";
+          var desc = String(item.description || "").trim();
+          var paragraphs = desc.split(/\n\n+/).map(function (p) { return p.trim(); }).filter(Boolean);
+          if (paragraphs.length && normalizeText(paragraphs[0]) === normalizeText(title)) {
+            paragraphs = paragraphs.slice(1);
+          }
+          desc = paragraphs.join(" ").trim();
+          if (normalizeText(desc) === normalizeText(title)) desc = "";
+          if (normalizeText(desc).indexOf(normalizeText(title) + " ") === 0) {
+            desc = desc.slice(title.length).trim();
           }
 
           card.innerHTML =
             '<div class="result-media">' +
-              '<span class="result-num">#' + (count - index) + "</span>" +
               (item.image ? '<img src="' + item.image + '" alt="' + escapeHtml(title) + '" />' : "") +
             "</div>" +
             '<div class="result-content">' +
@@ -952,6 +942,13 @@
 
           listingsStack.appendChild(card);
         });
+      }
+
+      function normalizeText(value) {
+        return String(value || "")
+          .toLowerCase()
+          .replace(/\s+/g, " ")
+          .trim();
       }
 
       function clearPhoto() {
@@ -992,21 +989,28 @@
       }
 
       function buildListing(clean, image, priceValue) {
-        var first = clean.split(/[.?!]/)[0].trim().split("\u0964")[0].trim();
-        var title = first.length > 6 ? first.slice(0, 72) : "Product listing";
+        var text = String(clean || "").trim();
+        var parts = text.split(/[.?!]\s+|\u0964\s*/);
+        var title = (parts[0] || "Product listing").trim().slice(0, 72);
+        var rest = text.slice(title.length).replace(/^[\s.?!?]+/, "").trim();
         var amount = Math.round(Number(priceValue));
-        var desc = clean.trim();
 
-        // Keep description only when it adds more detail than the title.
-        if (desc.toLowerCase() === title.toLowerCase()) {
-          desc = "";
+        // If user only entered one short line, show title only (no duplicate description).
+        var description = "";
+        if (rest && normalizeText(rest) !== normalizeText(title)) {
+          description = rest;
+        } else if (
+          text.length > title.length &&
+          normalizeText(text) !== normalizeText(title)
+        ) {
+          description = text;
         }
 
         return {
           id: "p-" + Date.now() + "-" + Math.floor(Math.random() * 1000),
-          title: title,
+          title: title || "Product listing",
           price: "\u20b9" + amount.toLocaleString("en-IN"),
-          description: desc,
+          description: description,
           image: image || ""
         };
       }
