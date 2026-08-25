@@ -24,8 +24,7 @@
   var listingsEmpty = document.getElementById("listings-empty");
   var listingsCount = document.getElementById("listings-count");
   var deleteAllListings = document.getElementById("delete-all-listings");
-  var downloadCsv = document.getElementById("download-csv");
-  var downloadJson = document.getElementById("download-json");
+  var downloadPdf = document.getElementById("download-pdf");
   var sortSelect = document.getElementById("sort-select");
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 
@@ -65,12 +64,6 @@
       .replace(/"/g, "&quot;");
   }
 
-  function escapeCsv(value) {
-    var s = String(value == null ? "" : value);
-    if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
-    return s;
-  }
-
   function getPriceNumber(item) {
     if (typeof item.priceValue === "number") return item.priceValue;
     var n = Number(String(item.price || "").replace(/[^0-9.]/g, ""));
@@ -94,6 +87,175 @@
       });
     }
     return items;
+  }
+
+  function safeFilename(name, fallback) {
+    return String(name || fallback || "product")
+      .replace(/[^\w\-]+/g, "_")
+      .replace(/_+/g, "_")
+      .replace(/^_|_$/g, "")
+      .slice(0, 40) || fallback || "product";
+  }
+
+  function imageFormat(dataUrl) {
+    if (!dataUrl || typeof dataUrl !== "string") return null;
+    if (dataUrl.indexOf("data:image/png") === 0) return "PNG";
+    if (dataUrl.indexOf("data:image/jpeg") === 0 || dataUrl.indexOf("data:image/jpg") === 0)
+      return "JPEG";
+    if (dataUrl.indexOf("data:image/webp") === 0) return "WEBP";
+    if (dataUrl.indexOf("data:image/") === 0) return "JPEG";
+    return null;
+  }
+
+  function loadImageSize(src) {
+    return new Promise(function (resolve) {
+      if (!src) {
+        resolve(null);
+        return;
+      }
+      var img = new Image();
+      img.onload = function () {
+        resolve({ w: img.naturalWidth || img.width, h: img.naturalHeight || img.height });
+      };
+      img.onerror = function () {
+        resolve(null);
+      };
+      img.src = src;
+    });
+  }
+
+  function getJsPdf() {
+    if (window.jspdf && window.jspdf.jsPDF) return window.jspdf.jsPDF;
+    return null;
+  }
+
+  async function buildPdf(items, options) {
+    var JsPDF = getJsPdf();
+    if (!JsPDF) {
+      alert("PDF library failed to load. Refresh the page and try again.");
+      return null;
+    }
+
+    var doc = new JsPDF({ unit: "mm", format: "a4" });
+    var margin = 16;
+    var pageW = doc.internal.pageSize.getWidth();
+    var pageH = doc.internal.pageSize.getHeight();
+    var contentW = pageW - margin * 2;
+    var y = margin;
+    var catalog = !options || !options.single;
+
+    function ensureSpace(needed) {
+      if (y + needed <= pageH - margin) return;
+      doc.addPage();
+      y = margin;
+    }
+
+    if (catalog) {
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(18);
+      doc.setTextColor(122, 31, 46);
+      doc.text("Product listings", margin, y);
+      y += 8;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.setTextColor(90, 90, 90);
+      doc.text(
+        items.length +
+          (items.length === 1 ? " product" : " products") +
+          "  |  Listing Studio  |  Pranjal Sharma",
+        margin,
+        y
+      );
+      doc.setTextColor(0, 0, 0);
+      y += 6;
+      doc.setDrawColor(200, 190, 180);
+      doc.line(margin, y, pageW - margin, y);
+      y += 10;
+    }
+
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      var title = String(item.title || "Product").trim();
+      var price = String(item.price || "").trim();
+      var desc = String(item.description || "").trim();
+      var imgSrc = item.image || "";
+      var fmt = imageFormat(imgSrc);
+      var size = fmt ? await loadImageSize(imgSrc) : null;
+      var imgH = 0;
+      var imgW = 0;
+
+      if (size && size.w > 0 && size.h > 0) {
+        imgW = Math.min(contentW, 90);
+        imgH = (size.h / size.w) * imgW;
+        if (imgH > 70) {
+          imgH = 70;
+          imgW = (size.w / size.h) * imgH;
+        }
+      }
+
+      var titleLines = doc.splitTextToSize(title, contentW);
+      var descLines = desc ? doc.splitTextToSize(desc, contentW) : [];
+      var blockH =
+        titleLines.length * 6 +
+        7 +
+        (descLines.length ? descLines.length * 5 + 2 : 0) +
+        (imgH ? imgH + 6 : 0) +
+        10;
+
+      if (i > 0) ensureSpace(Math.min(blockH, 60));
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(13);
+      doc.setTextColor(20, 18, 26);
+      ensureSpace(titleLines.length * 6 + 4);
+      doc.text(titleLines, margin, y);
+      y += titleLines.length * 6 + 2;
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.setTextColor(122, 31, 46);
+      ensureSpace(8);
+      doc.text(price || "Price not set", margin, y);
+      y += 7;
+      doc.setTextColor(0, 0, 0);
+
+      if (imgH && fmt) {
+        ensureSpace(imgH + 4);
+        try {
+          doc.addImage(imgSrc, fmt, margin, y, imgW, imgH);
+          y += imgH + 5;
+        } catch (e) {
+          /* skip broken image */
+        }
+      }
+
+      if (descLines.length) {
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.setTextColor(60, 60, 60);
+        ensureSpace(descLines.length * 5 + 2);
+        doc.text(descLines, margin, y);
+        y += descLines.length * 5 + 4;
+        doc.setTextColor(0, 0, 0);
+      }
+
+      if (catalog && i < items.length - 1) {
+        y += 2;
+        ensureSpace(8);
+        doc.setDrawColor(220, 210, 200);
+        doc.line(margin, y, pageW - margin, y);
+        y += 8;
+      }
+    }
+
+    return doc;
+  }
+
+  async function downloadListingsAsPdf(items, filename) {
+    if (!items || !items.length) return;
+    var doc = await buildPdf(items, { single: items.length === 1 });
+    if (!doc) return;
+    doc.save(filename);
   }
 
   function updateUI() {
@@ -123,8 +285,7 @@
       count === 0 ? "No products yet" : count === 1 ? "1 product" : count + " products";
     listingsEmpty.classList.toggle("hidden", count > 0);
     deleteAllListings.classList.toggle("hidden", count === 0);
-    downloadCsv.classList.toggle("hidden", count === 0);
-    downloadJson.classList.toggle("hidden", count === 0);
+    downloadPdf.classList.toggle("hidden", count === 0);
     listingsStack.innerHTML = "";
 
     items.forEach(function (item) {
@@ -164,7 +325,7 @@
         '">Delete</button>' +
         '<button class="btn btn-soft" type="button" data-download-one="' +
         item.id +
-        '">Download</button>' +
+        '">Download PDF</button>' +
         "</div></div>";
       listingsStack.appendChild(card);
     });
@@ -226,28 +387,6 @@
       image: image || "",
       createdAt: Date.now(),
     };
-  }
-
-  function downloadBlob(filename, mime, content) {
-    var blob = new Blob([content], { type: mime });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-
-  function listingsToCsv(items) {
-    var rows = [["title", "price", "description"]];
-    items.forEach(function (item) {
-      rows.push([item.title || "", item.price || "", item.description || ""]);
-    });
-    return rows
-      .map(function (row) {
-        return row.map(escapeCsv).join(",");
-      })
-      .join("\n");
   }
 
   function setRecUI() {
@@ -319,16 +458,7 @@
         return x.id === one.getAttribute("data-download-one");
       });
       if (!item) return;
-      var payload = {
-        title: item.title,
-        price: item.price,
-        description: item.description || "",
-      };
-      downloadBlob(
-        (item.title || "product").replace(/[^\w\-]+/g, "_").slice(0, 40) + ".json",
-        "application/json",
-        JSON.stringify(payload, null, 2)
-      );
+      downloadListingsAsPdf([item], safeFilename(item.title, "product") + ".pdf");
     }
   });
 
@@ -340,29 +470,9 @@
     updateUI();
   };
 
-  downloadCsv.onclick = function () {
+  downloadPdf.onclick = function () {
     if (!listings.length) return;
-    downloadBlob(
-      "product-listings.csv",
-      "text/csv;charset=utf-8",
-      listingsToCsv(sortedListings())
-    );
-  };
-
-  downloadJson.onclick = function () {
-    if (!listings.length) return;
-    var data = sortedListings().map(function (item) {
-      return {
-        title: item.title,
-        price: item.price,
-        description: item.description || "",
-      };
-    });
-    downloadBlob(
-      "product-listings.json",
-      "application/json",
-      JSON.stringify(data, null, 2)
-    );
+    downloadListingsAsPdf(sortedListings(), "product-listings.pdf");
   };
 
   function startRec() {

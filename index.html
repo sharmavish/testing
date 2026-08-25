@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta name="author" content="Pranjal Sharma" />
-  <title>Listing Studio · Pranjal Sharma · VIT-AP</title>
+  <title>Listing Studio - Pranjal Sharma - VIT-AP</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet" />
@@ -123,11 +123,11 @@
     <section class="hero">
       <div>
         <h1>From photo to product listing.</h1>
-        <p>Create a clean product catalog with bold pricing and downloadable listings — built like a converting PLP.</p>
+        <p>Create a clean product catalog with bold pricing and downloadable listings ? built like a converting PLP.</p>
         <a class="btn btn-main" href="#workspace">Start creating</a>
       </div>
       <div class="hero-art" aria-hidden="true">
-        <p>Clear cards, strong price, easy browse — patterns from high-converting product listing pages.</p>
+        <p>Clear cards, strong price, easy browse ? patterns from high-converting product listing pages.</p>
       </div>
     </section>
 
@@ -153,7 +153,7 @@
         </div>
         <div class="col">
           <h3>Details &amp; price</h3>
-          <p class="sub">Speak or type — price is mandatory</p>
+          <p class="sub">Speak or type ? price is mandatory</p>
           <div class="field">
             <label for="language">Language</label>
             <select id="language"><option value="hi-IN">Hindi</option><option value="en-IN">English</option></select>
@@ -169,7 +169,7 @@
             <textarea id="transcript" placeholder="Material, size, use, and what makes it special..."></textarea>
           </div>
           <div class="field">
-            <label for="price-input">Price (₹) *</label>
+            <label for="price-input">Price (?) *</label>
             <input id="price-input" type="number" min="1" step="1" placeholder="Enter price" />
           </div>
           <button class="btn btn-main full" id="generate-button" type="button" disabled>Add to catalog</button>
@@ -193,8 +193,7 @@
                 <option value="name">Name A-Z</option>
               </select>
             </label>
-            <button class="btn btn-soft hidden" id="download-csv" type="button">Download CSV</button>
-            <button class="btn btn-soft hidden" id="download-json" type="button">Download JSON</button>
+            <button class="btn btn-soft hidden" id="download-pdf" type="button">Download PDF</button>
             <button class="btn btn-soft hidden" id="delete-all-listings" type="button">Clear all</button>
           </div>
         </div>
@@ -208,6 +207,7 @@
       <span>VIT-AP University</span>
     </footer>
   </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
   <script src="./app.js"></script>
 </body>
 </html>
