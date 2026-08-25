@@ -1,7 +1,7 @@
 # Artisan AI
 
-Project site inspired by [artisan-ai-frontend](https://rasesh-codes.github.io/artisan-ai-frontend/).
+Student project by **Pranjal Sharma**.
 
-Upload a craft photo, describe it by voice (Hindi / English / Hinglish), and generate a product listing.
+Photo + voice/text → simple product listing demo, inspired by [artisan-ai-frontend](https://rasesh-codes.github.io/artisan-ai-frontend/).
 
 **Live site:** https://sharmavish.github.io/testing/

@@ -3,23 +3,37 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Artisan AI</title>
+    <meta
+      name="author"
+      content="Pranjal Sharma"
+    />
+    <meta
+      name="description"
+      content="Artisan AI — student project by Pranjal Sharma. Photo + voice to product listing."
+    />
+    <title>Artisan AI · Pranjal Sharma</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <div class="app">
       <header class="hero">
+        <p class="student-credit">Student Project · Pranjal Sharma</p>
         <div class="brand-badge">✦ ARTISAN AI</div>
         <h1>
           Turn your craft into a
           <span> digital product.</span>
         </h1>
-        <p>फोटो डालें • अपनी भाषा में बोलें • AI तैयार करेगा</p>
-        <div class="ai-badge">✨ AI-powered artisan assistant</div>
+        <p class="hero-sub">फोटो डालें • अपनी भाषा में बोलें • AI तैयार करेगा</p>
+        <div class="ai-badge">Built by Pranjal Sharma as a college student project</div>
       </header>
 
       <main class="main-card">
-        <div class="progress">
+        <div class="author-note">
+          <strong>Pranjal Sharma</strong>
+          <span>Frontend demo · Photo + voice → product listing</span>
+        </div>
+
+        <div class="progress" aria-label="Progress">
           <div class="progress-step" id="step-photo">
             <div class="step-circle" id="step-photo-circle">1</div>
             <span>Product Photo</span>
@@ -61,8 +75,8 @@
           </button>
 
           <div class="photo-preview hidden" id="photo-preview">
-            <img id="photo-img" alt="Product" />
-            <button class="remove-photo" id="remove-photo" type="button">
+            <img id="photo-img" alt="Product preview" />
+            <button class="remove-photo" id="remove-photo" type="button" aria-label="Remove photo">
               ×
             </button>
             <div class="photo-success">✓ Product photo added</div>
@@ -75,7 +89,7 @@
           <div class="section-heading">
             <div>
               <h2>🎙️ Describe your product</h2>
-              <p>Speak naturally in your preferred language</p>
+              <p>Speak or type in your preferred language</p>
             </div>
             <span class="step-label">STEP 2</span>
           </div>
@@ -85,15 +99,17 @@
             <select id="language">
               <option value="hi-IN">हिन्दी • Hindi</option>
               <option value="en-IN">English</option>
-              <option value="hi-IN-hinglish">Hinglish</option>
+              <option value="hi-IN">Hinglish</option>
             </select>
           </div>
 
           <div class="record-area">
-            <button class="mic-button" id="mic-button" type="button">🎙️</button>
+            <button class="mic-button" id="mic-button" type="button" aria-label="Record voice">
+              🎙️
+            </button>
             <h3 id="record-title">Tap to speak</h3>
             <p id="record-hint">Tell us about your product</p>
-            <div class="wave hidden" id="wave">
+            <div class="wave hidden" id="wave" aria-hidden="true">
               <span></span><span></span><span></span><span></span>
               <span></span><span></span><span></span>
             </div>
@@ -101,23 +117,21 @@
 
           <div class="status-card loading hidden" id="status-loading">
             <span>✨</span>
-            AI is understanding your voice...
+            Understanding your voice...
           </div>
           <div class="status-card success hidden" id="status-success">
             <span>✓</span>
-            Voice successfully converted to text
+            Voice converted to text — edit below if needed
           </div>
-        </section>
 
-        <section class="transcript-card hidden" id="transcript-card">
-          <div class="transcript-header">
-            <div>
-              <h2>📝 What we heard</h2>
-              <p>You can edit the transcript if needed</p>
-            </div>
-            <span class="ai-small">AI</span>
+          <div class="type-box">
+            <label for="transcript">Or type your description</label>
+            <textarea
+              id="transcript"
+              rows="4"
+              placeholder="Example: यह हाथ से बना मिट्टी का दीया है। त्योहारों के लिए बहुत सुंदर है।"
+            ></textarea>
           </div>
-          <textarea id="transcript" rows="5"></textarea>
         </section>
 
         <section class="generate-section">
@@ -126,9 +140,8 @@
             Generate Product Information
             <span>→</span>
           </button>
-          <p>
-            Artisan AI will combine your photo and description to create your
-            product listing.
+          <p id="generate-hint">
+            Add a photo and a short description to generate your listing.
           </p>
         </section>
 
@@ -136,9 +149,12 @@
           <div class="transcript-header">
             <div>
               <h2 id="listing-title">Handmade Craft</h2>
-              <p>Generated listing ready to share</p>
+              <p>Generated listing · demo by Pranjal Sharma</p>
             </div>
             <span class="ai-small">AI</span>
+          </div>
+          <div class="listing-photo-wrap hidden" id="listing-photo-wrap">
+            <img id="listing-photo" alt="Product" />
           </div>
           <p class="price" id="listing-price">₹499</p>
           <div class="listing-meta" id="listing-tags"></div>
@@ -166,7 +182,10 @@
         </section>
       </main>
 
-      <footer>Built for artisans • Powered by AI</footer>
+      <footer>
+        <p class="footer-name">Created by <strong>Pranjal Sharma</strong></p>
+        <p>Student project · Artisan AI frontend demo · 2026</p>
+      </footer>
     </div>
 
     <script src="./app.js"></script>
