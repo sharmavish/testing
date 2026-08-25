@@ -5,535 +5,658 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta name="author" content="Pranjal Sharma" />
+  <meta name="description" content="Artisan AI by Pranjal Sharma — turn craft photos and voice into product listings." />
   <title>Artisan AI · Pranjal Sharma</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
   <style>
+    :root {
+      --ink: #16131f;
+      --muted: #5c5668;
+      --line: rgba(22, 19, 31, 0.12);
+      --paper: #f7f4ef;
+      --panel: rgba(255, 252, 248, 0.88);
+      --accent: #c45c26;
+      --accent-deep: #9a3f14;
+      --indigo: #2a2450;
+      --indigo-soft: #ece8f7;
+      --ok: #1f6b4a;
+      --shadow: 0 30px 80px rgba(42, 36, 80, 0.14);
+      --radius: 28px;
+    }
+
     * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #fffaf2;
-      color: #292524;
-    }
-    button, select, textarea { font: inherit; }
-    button { cursor: pointer; }
-
-    .app {
       min-height: 100vh;
-      padding: 40px 16px 36px;
-      background: radial-gradient(circle at top, #fff1d6 0, #fffaf2 40%, #fffaf2 100%);
+      color: var(--ink);
+      font-family: Outfit, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(ellipse 80% 50% at 10% -10%, #ddd6f3 0%, transparent 55%),
+        radial-gradient(ellipse 70% 45% at 95% 5%, #f3d9c4 0%, transparent 50%),
+        radial-gradient(ellipse 60% 40% at 50% 100%, #d9e5df 0%, transparent 55%),
+        linear-gradient(165deg, #f4f0ea 0%, #ebe4f2 48%, #f2ebe3 100%);
+      background-attachment: fixed;
     }
 
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.35;
+      background-image:
+        linear-gradient(rgba(22, 19, 31, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(22, 19, 31, 0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(circle at center, black 35%, transparent 85%);
+    }
+
+    button, select, textarea { font: inherit; }
+    button { cursor: pointer; border: 0; }
+
+    .wrap {
+      width: min(1120px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 1.25rem 0 3.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ----- HERO: one composition ----- */
     .hero {
-      max-width: 760px;
-      margin: 0 auto 28px;
-      text-align: center;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 2.5rem;
+      align-items: end;
+      min-height: min(78vh, 720px);
+      padding: 1.5rem 0 2.5rem;
+      animation: rise 0.8s ease both;
     }
 
-    .brand-badge {
-      display: inline-block;
-      padding: 8px 16px;
-      border-radius: 999px;
-      background: #fff1d6;
-      color: #b45309;
-      font-size: 12px;
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    @keyframes floaty {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .brand {
+      font-family: Syne, sans-serif;
+      font-size: clamp(3.2rem, 8vw, 5.6rem);
       font-weight: 800;
-      letter-spacing: 1.2px;
+      line-height: 0.92;
+      letter-spacing: -0.045em;
+      margin: 0 0 1rem;
+      color: var(--indigo);
     }
 
-    .hero h1 {
-      margin: 16px 0 10px;
-      font-size: clamp(34px, 6vw, 52px);
-      line-height: 1.08;
-      letter-spacing: -1.4px;
+    .brand em {
+      font-style: normal;
+      color: var(--accent);
     }
 
-    .hero h1 span { color: #d97706; }
-
-    .hero > p {
-      margin: 0;
-      color: #78716c;
-      font-size: 17px;
+    .hero-copy h2 {
+      margin: 0 0 0.85rem;
+      max-width: 12ch;
+      font-family: Syne, sans-serif;
+      font-size: clamp(1.7rem, 3.4vw, 2.35rem);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
     }
 
-    .by {
-      display: inline-block;
-      margin-top: 14px;
-      padding: 6px 12px;
-      border: 1px solid #f1d4a5;
+    .hero-copy p {
+      margin: 0 0 1.6rem;
+      max-width: 34ch;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.55;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      min-height: 3rem;
+      padding: 0 1.25rem;
       border-radius: 999px;
-      background: rgba(255,255,255,.75);
-      color: #92400e;
-      font-size: 13px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: var(--indigo);
+      color: #fff;
+      box-shadow: 0 14px 30px rgba(42, 36, 80, 0.25);
+    }
+
+    .btn-primary:hover { background: #1f1a3d; }
+
+    .btn-primary:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-quiet {
+      background: transparent;
+      color: var(--muted);
+      padding-left: 0.4rem;
+    }
+
+    .credit {
+      margin-top: 1.4rem;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .credit strong { color: var(--ink); font-weight: 600; }
+
+    .hero-visual {
+      position: relative;
+      min-height: 340px;
+      border-radius: 32px;
+      overflow: hidden;
+      background:
+        linear-gradient(145deg, #2a2450 0%, #3d3468 45%, #c45c26 140%);
+      box-shadow: var(--shadow);
+      animation: rise 0.9s ease 0.1s both;
+    }
+
+    .hero-visual::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 30% 25%, rgba(255,255,255,0.22), transparent 35%),
+        radial-gradient(circle at 80% 70%, rgba(243, 180, 120, 0.35), transparent 40%);
+    }
+
+    .loom {
+      position: absolute;
+      inset: 18% 12%;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 10px;
+      animation: floaty 6s ease-in-out infinite;
+    }
+
+    .loom span {
+      border-radius: 999px;
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+
+    .loom span:nth-child(odd) { background: rgba(255, 196, 140, 0.35); }
+    .loom span:nth-child(3n) { transform: translateY(18px); }
+    .loom span:nth-child(5n) { transform: translateY(-12px); }
+
+    .visual-caption {
+      position: absolute;
+      left: 1.2rem;
+      right: 1.2rem;
+      bottom: 1.2rem;
+      z-index: 2;
+      color: rgba(255,255,255,0.88);
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    /* ----- WORKSPACE ----- */
+    .workspace {
+      scroll-margin-top: 1.5rem;
+      animation: rise 0.85s ease 0.15s both;
+    }
+
+    .workspace-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 1rem;
+      margin: 0 0 1rem;
+    }
+
+    .workspace-head h3 {
+      margin: 0;
+      font-family: Syne, sans-serif;
+      font-size: 1.35rem;
+      letter-spacing: -0.02em;
+    }
+
+    .workspace-head p {
+      margin: 0.3rem 0 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .steps {
+      display: flex;
+      gap: 0.5rem;
+      color: var(--muted);
+      font-size: 0.82rem;
       font-weight: 600;
     }
 
-    .card {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 24px;
+    .steps b {
+      display: inline-grid;
+      place-items: center;
+      width: 1.35rem;
+      height: 1.35rem;
+      margin-right: 0.35rem;
+      border-radius: 999px;
+      background: rgba(22,19,31,0.08);
+      font-size: 0.72rem;
+    }
+
+    .steps .on { color: var(--accent-deep); }
+    .steps .on b { background: var(--accent); color: #fff; }
+
+    .panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .pane {
+      background: var(--panel);
+      padding: 1.4rem;
+    }
+
+    .pane h4 {
+      margin: 0 0 0.35rem;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .pane .sub {
+      margin: 0 0 1rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .drop {
+      width: 100%;
+      min-height: 240px;
+      display: grid;
+      place-content: center;
+      gap: 0.55rem;
+      text-align: center;
+      border: 1.5px dashed rgba(42, 36, 80, 0.25);
+      border-radius: 20px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.7), rgba(236, 232, 247, 0.55));
+      transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+    }
+
+    .drop:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      background: linear-gradient(180deg, #fff, #f8efe8);
+    }
+
+    .drop svg {
+      width: 42px;
+      height: 42px;
+      stroke: var(--indigo);
+      fill: none;
+      stroke-width: 1.7;
+    }
+
+    .drop strong { font-size: 1rem; }
+    .drop span { color: var(--muted); font-size: 0.88rem; }
+
+    .preview {
+      display: grid;
+      gap: 0.85rem;
+    }
+
+    .preview img {
+      width: 100%;
+      max-height: 280px;
+      object-fit: contain;
+      border-radius: 18px;
+      background: #f0ebe4;
+      border: 1px solid var(--line);
+    }
+
+    .field {
+      display: grid;
+      gap: 0.4rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .field label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+    }
+
+    .field select,
+    .field textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
       background: #fff;
-      border: 1px solid #f0e5d5;
-      border-radius: 28px;
-      box-shadow: 0 20px 60px rgba(120,75,30,.08);
+      color: var(--ink);
+      outline: none;
     }
 
-    .progress {
-      display: flex;
-      align-items: center;
-      gap: 0;
-      margin-bottom: 28px;
+    .field select {
+      min-height: 2.9rem;
+      padding: 0 0.9rem;
     }
 
-    .pstep {
+    .field textarea {
+      min-height: 9rem;
+      padding: 0.9rem 1rem;
+      resize: vertical;
+      line-height: 1.55;
+    }
+
+    .field select:focus,
+    .field textarea:focus {
+      border-color: rgba(196, 92, 38, 0.55);
+      box-shadow: 0 0 0 4px rgba(196, 92, 38, 0.12);
+    }
+
+    .voice-bar {
       display: flex;
       align-items: center;
-      gap: 8px;
-      color: #a8a29e;
-      font-size: 12px;
+      gap: 0.75rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .mic {
+      min-width: 3rem;
+      width: 3rem;
+      height: 3rem;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 10px 22px rgba(196, 92, 38, 0.28);
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    .mic:hover { background: var(--accent-deep); transform: scale(1.04); }
+
+    .mic.rec {
+      background: #b42318;
+      animation: pulse 1.3s infinite;
+    }
+
+    .mic svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(180, 35, 24, 0.35); }
+      70% { box-shadow: 0 0 0 16px rgba(180, 35, 24, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(180, 35, 24, 0); }
+    }
+
+    .voice-bar p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .actions {
+      display: grid;
+      gap: 0.55rem;
+      margin-top: 0.4rem;
+    }
+
+    .hint {
+      margin: 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .result {
+      margin-top: 1rem;
+      padding: 1.15rem;
+      border-radius: 20px;
+      background: linear-gradient(180deg, #fff7f0, #ffffff);
+      border: 1px solid rgba(196, 92, 38, 0.22);
+      animation: rise 0.45s ease both;
+    }
+
+    .result-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: start;
+      margin-bottom: 0.75rem;
+    }
+
+    .result-top h5 {
+      margin: 0;
+      font-family: Syne, sans-serif;
+      font-size: 1.35rem;
+      letter-spacing: -0.02em;
+    }
+
+    .price {
+      margin: 0;
+      color: var(--accent-deep);
+      font-size: 1.35rem;
       font-weight: 700;
       white-space: nowrap;
     }
 
-    .pstep .n {
-      width: 28px;
-      height: 28px;
+    .result img {
+      width: 100%;
+      max-height: 200px;
+      object-fit: contain;
+      border-radius: 14px;
+      margin-bottom: 0.75rem;
+      background: #f7f2ec;
+      border: 1px solid var(--line);
+    }
+
+    .tags {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      background: #f5f5f4;
-      font-size: 12px;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 0.7rem;
     }
-
-    .pstep.on { color: #b45309; }
-    .pstep.on .n { background: #d97706; color: #fff; }
-
-    .pline {
-      flex: 1;
-      height: 1px;
-      margin: 0 10px;
-      background: #e7e5e4;
-    }
-
-    .sec { margin-top: 8px; }
-
-    .sec-h {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-
-    .sec-h h2 { margin: 0; font-size: 20px; }
-    .sec-h p { margin: 4px 0 0; color: #78716c; font-size: 14px; }
 
     .tag {
-      padding: 5px 9px;
-      border-radius: 7px;
-      background: #fafaf9;
-      color: #a8a29e;
-      font-size: 10px;
-      font-weight: 800;
-      height: fit-content;
-    }
-
-    .upload {
-      width: 100%;
-      min-height: 220px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      border: 2px dashed #e7c996;
-      border-radius: 22px;
-      background: #fffaf2;
-      transition: .2s;
-    }
-
-    .upload:hover {
-      border-color: #d97706;
-      background: #fff6e5;
-    }
-
-    .cam {
-      width: 62px;
-      height: 62px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 20px;
-      background: #fff0d0;
-      font-size: 28px;
-    }
-
-    .upload strong { margin-top: 12px; font-size: 17px; }
-    .upload .hint { margin-top: 4px; color: #78716c; font-size: 13px; }
-
-    .choose {
-      margin-top: 16px;
-      padding: 10px 18px;
-      border-radius: 12px;
-      background: #d97706;
-      color: #fff;
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .preview {
-      position: relative;
-      overflow: hidden;
-      border-radius: 22px;
-      border: 1px solid #e7e5e4;
-      background: #fafaf9;
-    }
-
-    .preview img {
-      display: block;
-      width: 100%;
-      max-height: 360px;
-      object-fit: contain;
-    }
-
-    .rm {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      width: 36px;
-      height: 36px;
-      border: 0;
-      border-radius: 50%;
-      background: rgba(0,0,0,.65);
-      color: #fff;
-      font-size: 20px;
-    }
-
-    .ok {
-      padding: 12px 16px;
-      background: #f0fdf4;
-      color: #15803d;
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .and {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 26px 0;
-      color: #a8a29e;
-      font-size: 11px;
-      font-weight: 800;
-    }
-
-    .and:before, .and:after {
-      content: "";
-      flex: 1;
-      height: 1px;
-      background: #e7e5e4;
-    }
-
-    label.lbl {
-      display: block;
-      margin-bottom: 7px;
-      color: #57534e;
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    select, textarea {
-      width: 100%;
-      padding: 13px 15px;
-      border: 1px solid #e7e5e4;
-      border-radius: 14px;
-      background: #fff;
-      outline: none;
-      color: #292524;
-    }
-
-    select:focus, textarea:focus { border-color: #d97706; }
-
-    .record {
-      margin-top: 14px;
-      padding: 26px 14px;
-      text-align: center;
-      border-radius: 22px;
-      background: #fafaf9;
-    }
-
-    .mic {
-      width: 82px;
-      height: 82px;
-      border: 0;
-      border-radius: 50%;
-      background: #d97706;
-      color: #fff;
-      font-size: 30px;
-      box-shadow: 0 10px 25px rgba(217,119,6,.25);
-    }
-
-    .mic:hover { background: #b45309; }
-    .mic.rec {
-      background: #dc2626;
-      animation: pulse 1.4s infinite;
-    }
-
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(220,38,38,.35); }
-      70% { box-shadow: 0 0 0 18px rgba(220,38,38,0); }
-      100% { box-shadow: 0 0 0 0 rgba(220,38,38,0); }
-    }
-
-    .record h3 { margin: 14px 0 4px; font-size: 18px; }
-    .record p { margin: 0; color: #78716c; font-size: 13px; }
-
-    .type { margin-top: 16px; }
-    .type textarea { min-height: 110px; resize: vertical; line-height: 1.55; }
-
-    .gen {
-      margin-top: 24px;
-      text-align: center;
-    }
-
-    .gen-btn {
-      width: 100%;
-      min-height: 58px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      border: 0;
-      border-radius: 16px;
-      background: #292524;
-      color: #fff;
-      font-size: 16px;
-      font-weight: 800;
-    }
-
-    .gen-btn:hover:not(:disabled) { background: #1c1917; }
-    .gen-btn:disabled { opacity: .4; cursor: not-allowed; }
-
-    .gen > p {
-      margin: 10px auto 0;
-      max-width: 420px;
-      color: #a8a29e;
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
-    .listing {
-      margin-top: 22px;
-      padding: 20px;
-      border-radius: 22px;
-      border: 1px solid #f5dfae;
-      background: #fffbeb;
-    }
-
-    .listing-h {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .listing-h h2 { margin: 0; font-size: 18px; }
-    .listing-h p { margin: 4px 0 0; color: #78716c; font-size: 12px; }
-
-    .ai {
-      padding: 5px 8px;
-      border-radius: 7px;
-      background: #d97706;
-      color: #fff;
-      font-size: 9px;
-      font-weight: 800;
-      height: fit-content;
-    }
-
-    .price {
-      margin: 0 0 10px;
-      color: #b45309;
-      font-size: 28px;
-      font-weight: 800;
-    }
-
-    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
-
-    .chip {
-      padding: 6px 10px;
+      padding: 0.3rem 0.65rem;
       border-radius: 999px;
-      background: #fff1d6;
-      color: #92400e;
-      font-size: 12px;
-      font-weight: 700;
+      background: var(--indigo-soft);
+      color: var(--indigo);
+      font-size: 0.75rem;
+      font-weight: 600;
     }
 
     .desc {
       margin: 0;
-      color: #57534e;
-      font-size: 14px;
+      color: #3a3545;
       line-height: 1.6;
+      font-size: 0.95rem;
       white-space: pre-wrap;
     }
 
-    .listing img {
-      display: block;
-      width: 100%;
-      max-height: 220px;
-      object-fit: contain;
-      margin-bottom: 12px;
-      border-radius: 14px;
-      background: #fff;
-      border: 1px solid #ead9b8;
-    }
-
-    .how {
-      margin-top: 26px;
-      padding: 18px;
-      border-radius: 20px;
-      background: #fafaf9;
-      text-align: center;
-    }
-
-    .how h3 { margin: 0 0 16px; font-size: 14px; }
-
-    .flow {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
-    .flow div { display: flex; flex-direction: column; align-items: center; }
-    .flow span { font-size: 22px; }
-    .flow p { margin: 6px 0 0; color: #78716c; font-size: 11px; font-weight: 600; }
-    .arrow { color: #d6d3d1; }
-
     footer {
-      max-width: 760px;
-      margin: 22px auto 0;
+      margin-top: 2.25rem;
       text-align: center;
-      color: #a8a29e;
-      font-size: 12px;
+      color: var(--muted);
+      font-size: 0.9rem;
     }
 
-    footer b { color: #78716c; }
+    footer strong { color: var(--ink); }
 
     .hidden { display: none !important; }
 
-    @media (max-width: 600px) {
-      .app { padding: 24px 12px 20px; }
-      .card { padding: 16px; border-radius: 22px; }
-      .pstep span.label { display: none; }
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+        gap: 1.5rem;
+        padding-top: 0.5rem;
+      }
+
+      .hero-visual { min-height: 240px; order: -1; }
+
+      .brand { font-size: clamp(2.8rem, 14vw, 4rem); }
+
+      .panel { grid-template-columns: 1fr; }
+
+      .workspace-head {
+        flex-direction: column;
+        align-items: start;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="app">
+  <div class="wrap">
     <header class="hero">
-      <div class="brand-badge">✦ ARTISAN AI</div>
-      <h1>Turn your craft into a <span>digital product.</span></h1>
-      <p>फोटो डालें • अपनी भाषा में बोलें • AI तैयार करेगा</p>
-      <div class="by">Built by Pranjal Sharma</div>
-    </header>
-
-    <main class="card">
-      <div class="progress">
-        <div class="pstep" id="step-photo"><div class="n" id="n1">1</div><span class="label">Product Photo</span></div>
-        <div class="pline"></div>
-        <div class="pstep" id="step-voice"><div class="n" id="n2">2</div><span class="label">Voice</span></div>
-        <div class="pline"></div>
-        <div class="pstep" id="step-listing"><div class="n" id="n3">3</div><span class="label">AI Listing</span></div>
+      <div class="hero-copy">
+        <p class="brand">Artisan <em>AI</em></p>
+        <h2>Listings that sound like your craft.</h2>
+        <p>
+          Photo in. Voice or text in your language. A clean product listing out —
+          ready to share online.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#workspace">Start listing</a>
+          <span class="btn-quiet">Hindi · English · Hinglish</span>
+        </div>
+        <p class="credit">Designed &amp; built by <strong>Pranjal Sharma</strong></p>
       </div>
 
-      <section class="sec">
-        <div class="sec-h">
-          <div>
-            <h2>📷 Add your product</h2>
-            <p>Take a photo or upload an existing one</p>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="loom">
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <p class="visual-caption">Craft-first listing assistant for makers</p>
+      </div>
+    </header>
+
+    <section class="workspace" id="workspace">
+      <div class="workspace-head">
+        <div>
+          <h3>Create a listing</h3>
+          <p>Two inputs. One generated product page draft.</p>
+        </div>
+        <div class="steps" aria-label="Progress">
+          <span class="step" id="step-photo"><b>1</b>Photo</span>
+          <span class="step" id="step-voice"><b>2</b>Details</span>
+          <span class="step" id="step-listing"><b>3</b>Listing</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="pane">
+          <h4>Product photo</h4>
+          <p class="sub">Clear frame, natural light works best</p>
+
+          <input id="photo-input" type="file" accept="image/*" capture="environment" hidden />
+
+          <button class="drop" id="photo-upload" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 16V6" />
+              <path d="M8 10l4-4 4 4" />
+              <path d="M4 18h16" />
+            </svg>
+            <strong>Upload photo</strong>
+            <span>PNG or JPG</span>
+          </button>
+
+          <div class="preview hidden" id="photo-preview">
+            <img id="photo-img" alt="Product preview" />
+            <button class="btn btn-quiet" id="remove-photo" type="button" style="justify-self:start;color:var(--accent-deep)">
+              Remove photo
+            </button>
           </div>
-          <span class="tag">STEP 1</span>
         </div>
 
-        <input id="photo-input" type="file" accept="image/*" capture="environment" hidden />
+        <div class="pane">
+          <h4>Description</h4>
+          <p class="sub">Speak naturally, or type the details</p>
 
-        <button class="upload" id="photo-upload" type="button">
-          <div class="cam">📷</div>
-          <strong>Add Product Photo</strong>
-          <div class="hint">Take a photo or choose from gallery</div>
-          <div class="choose">Choose Photo</div>
-        </button>
-
-        <div class="preview hidden" id="photo-preview">
-          <img id="photo-img" alt="Product" />
-          <button class="rm" id="remove-photo" type="button" aria-label="Remove">×</button>
-          <div class="ok">✓ Product photo added</div>
-        </div>
-      </section>
-
-      <div class="and">AND</div>
-
-      <section class="sec">
-        <div class="sec-h">
-          <div>
-            <h2>🎙️ Describe your product</h2>
-            <p>Speak or type in your preferred language</p>
+          <div class="field">
+            <label for="language">Language</label>
+            <select id="language">
+              <option value="hi-IN">Hindi</option>
+              <option value="en-IN">English</option>
+              <option value="hi-IN">Hinglish</option>
+            </select>
           </div>
-          <span class="tag">STEP 2</span>
-        </div>
 
-        <label class="lbl" for="language">भाषा / Language</label>
-        <select id="language">
-          <option value="hi-IN">हिन्दी • Hindi</option>
-          <option value="en-IN">English</option>
-          <option value="hi-IN">Hinglish</option>
-        </select>
-
-        <div class="record">
-          <button class="mic" id="mic-button" type="button">🎙️</button>
-          <h3 id="record-title">Tap to speak</h3>
-          <p id="record-hint">Tell us about your product</p>
-        </div>
-
-        <div class="type">
-          <label class="lbl" for="transcript">Or type your description</label>
-          <textarea id="transcript" placeholder="Example: यह हाथ से बना मिट्टी का दीया है।"></textarea>
-        </div>
-      </section>
-
-      <section class="gen">
-        <button class="gen-btn" id="generate-button" type="button" disabled>
-          <span>✨</span> Generate Product Information <span>→</span>
-        </button>
-        <p id="generate-hint">Add a photo and description to create your listing.</p>
-      </section>
-
-      <section class="listing hidden" id="listing-card">
-        <div class="listing-h">
-          <div>
-            <h2 id="listing-title">Handmade Craft</h2>
-            <p>Generated listing</p>
+          <div class="voice-bar">
+            <button class="mic" id="mic-button" type="button" aria-label="Record voice">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v5a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V21h2v-3.1A7 7 0 0 0 19 11h-2z"/></svg>
+            </button>
+            <p id="record-hint">Tap mic to describe your craft</p>
           </div>
-          <span class="ai">AI</span>
+
+          <div class="field">
+            <label for="transcript">Product details</label>
+            <textarea id="transcript" placeholder="Material, size, use, and what makes it special..."></textarea>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-primary" id="generate-button" type="button" disabled>
+              Generate listing
+            </button>
+            <p class="hint" id="generate-hint">Add a photo and description to continue.</p>
+          </div>
+        </div>
+      </div>
+
+      <section class="result hidden" id="listing-card">
+        <div class="result-top">
+          <h5 id="listing-title">Listing</h5>
+          <p class="price" id="listing-price"></p>
         </div>
         <img class="hidden" id="listing-photo" alt="Product" />
-        <p class="price" id="listing-price"></p>
-        <div class="chips" id="listing-tags"></div>
+        <div class="tags" id="listing-tags"></div>
         <p class="desc" id="listing-desc"></p>
       </section>
+    </section>
 
-      <section class="how">
-        <h3>How Artisan AI works</h3>
-        <div class="flow">
-          <div><span>📷</span><p>Show your craft</p></div>
-          <div class="arrow">→</div>
-          <div><span>🎙️</span><p>Describe it</p></div>
-          <div class="arrow">→</div>
-          <div><span>✨</span><p>AI creates listing</p></div>
-        </div>
-      </section>
-    </main>
-
-    <footer>Built by <b>Pranjal Sharma</b> · Artisan AI</footer>
+    <footer>Artisan AI · <strong>Pranjal Sharma</strong></footer>
   </div>
 
   <script>
@@ -548,7 +671,6 @@
       var removePhoto = document.getElementById("remove-photo");
       var language = document.getElementById("language");
       var micButton = document.getElementById("mic-button");
-      var recordTitle = document.getElementById("record-title");
       var recordHint = document.getElementById("record-hint");
       var transcript = document.getElementById("transcript");
       var generateButton = document.getElementById("generate-button");
@@ -559,25 +681,23 @@
       var listingTags = document.getElementById("listing-tags");
       var listingDesc = document.getElementById("listing-desc");
       var listingPhoto = document.getElementById("listing-photo");
-
       var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-      function setStep(id, nId, on, num) {
+      function setStep(id, on) {
         var el = document.getElementById(id);
-        var n = document.getElementById(nId);
-        if (on) { el.classList.add("on"); n.textContent = "✓"; }
-        else { el.classList.remove("on"); n.textContent = String(num); }
+        if (on) el.classList.add("on");
+        else el.classList.remove("on");
       }
 
       function updateUI() {
-        setStep("step-photo", "n1", state.hasPhoto, 1);
-        setStep("step-voice", "n2", !!state.transcript.trim(), 2);
-        setStep("step-listing", "n3", !listingCard.classList.contains("hidden"), 3);
+        setStep("step-photo", state.hasPhoto);
+        setStep("step-voice", !!state.transcript.trim());
+        setStep("step-listing", !listingCard.classList.contains("hidden"));
         var ready = state.hasPhoto && !!state.transcript.trim();
         generateButton.disabled = !ready;
         generateHint.textContent = ready
-          ? "Artisan AI will combine your photo and description."
-          : "Add a photo and description to create your listing.";
+          ? "Ready to generate your listing."
+          : "Add a photo and description to continue.";
       }
 
       function hideListing() {
@@ -586,20 +706,19 @@
       }
 
       function setRecUI() {
-        micButton.className = state.isRecording ? "mic rec" : "mic";
-        micButton.textContent = state.isRecording ? "⏹" : "🎙️";
+        if (state.isRecording) micButton.classList.add("rec");
+        else micButton.classList.remove("rec");
         language.disabled = state.isRecording;
-        recordTitle.textContent = state.isRecording ? "Listening..." : "Tap to speak";
         recordHint.textContent = state.isRecording
-          ? "Tap again to stop"
-          : (SR ? "Tell us about your product" : "Voice not supported — type below");
+          ? "Listening… tap again to stop"
+          : (SR ? "Tap mic to describe your craft" : "Voice unavailable — type instead");
       }
 
       photoUpload.onclick = function () { photoInput.click(); };
 
       photoInput.onchange = function () {
         var file = photoInput.files && photoInput.files[0];
-        if (!file || !file.type || file.type.indexOf("image/") !== 0) {
+        if (!file || file.type.indexOf("image/") !== 0) {
           alert("Please choose an image file.");
           return;
         }
@@ -620,6 +739,7 @@
         previewUrl = null;
         photoImg.removeAttribute("src");
         photoUpload.classList.remove("hidden");
+        photoPreview.classList.remove("hidden");
         photoPreview.classList.add("hidden");
         hideListing();
         updateUI();
@@ -633,7 +753,7 @@
 
       function startRec() {
         if (!SR) {
-          alert("Speech recognition not supported. Please type your description.");
+          alert("Speech recognition is not supported here. Please type instead.");
           transcript.focus();
           return;
         }
@@ -643,12 +763,7 @@
         recognition.lang = language.value || "hi-IN";
         recognition.interimResults = true;
         recognition.continuous = true;
-
-        recognition.onstart = function () {
-          state.isRecording = true;
-          setRecUI();
-        };
-
+        recognition.onstart = function () { state.isRecording = true; setRecUI(); };
         recognition.onresult = function (event) {
           var interim = "";
           for (var i = event.resultIndex; i < event.results.length; i++) {
@@ -661,7 +776,6 @@
           state.transcript = live;
           updateUI();
         };
-
         recognition.onerror = function (event) {
           if (event.error === "aborted" || event.error === "no-speech") return;
           state.isRecording = false;
@@ -670,7 +784,6 @@
             ? "Microphone blocked. Allow access or type instead."
             : "Speech failed. Try again or type below.");
         };
-
         recognition.onend = function () {
           state.isRecording = false;
           setRecUI();
@@ -680,7 +793,6 @@
           hideListing();
           updateUI();
         };
-
         try { recognition.start(); } catch (e) { alert("Could not start microphone."); }
       }
 
@@ -700,7 +812,7 @@
         var first = clean.split(/[.।!?]/)[0].trim();
         var title = first.length > 6 ? first.slice(0, 64) : "Handmade Artisan Craft";
         var words = clean.toLowerCase();
-        var tags = ["Handmade", "Artisan"];
+        var tags = ["Handmade"];
         if (/diya|दीया|lamp|candle/.test(words)) tags.push("Festive");
         if (/pottery|मिट्टी|clay|ceramic/.test(words)) tags.push("Pottery");
         if (/silk|सिल्क|fabric|कपड़ा|saree/.test(words)) tags.push("Textile");
@@ -713,11 +825,11 @@
 
         listingTitle.textContent = title;
         listingPrice.textContent = "₹" + price.toLocaleString("en-IN");
-        listingDesc.textContent = clean + "\n\nHandmade with care. Perfect for gifting or home use.";
+        listingDesc.textContent = clean + "\n\nHandmade with care. Suitable for gifting and everyday use.";
         listingTags.innerHTML = "";
         tags.slice(0, 4).forEach(function (t) {
           var s = document.createElement("span");
-          s.className = "chip";
+          s.className = "tag";
           s.textContent = t;
           listingTags.appendChild(s);
         });
