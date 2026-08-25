@@ -1,7 +1,15 @@
-# Product Listing Assistant
+# Listing Studio
 
-Built by **Pranjal Sharma**, VIT-AP University.
+Product listing site by **Pranjal Sharma** (VIT-AP University).
 
-Upload a product photo, add a short description (voice or text), and generate a listing.
+Built with **HTML + CSS + JavaScript** for GitHub Pages.
 
 **Live:** https://sharmavish.github.io/testing/
+
+## Features
+
+- Upload product photo
+- Add description (voice or text)
+- Mandatory price
+- Save multiple products in the browser
+- Delete individual listings or clear all
