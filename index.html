@@ -6,7 +6,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta name="author" content="Pranjal Sharma" />
   <meta name="description" content="Product listing tool by Pranjal Sharma, VIT-AP University." />
-  <title>Listing Studio Â· Pranjal Sharma Â· VIT-AP</title>
+  <title>Listing Studio ? Pranjal Sharma ? VIT-AP</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet" />
@@ -473,7 +473,9 @@
     }
 
     .listings {
-      margin-top: 1.5rem;
+      margin-top: 1.75rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--line);
     }
 
     .listings-head {
@@ -481,81 +483,62 @@
       justify-content: space-between;
       align-items: end;
       gap: 1rem;
-      margin-bottom: 0.9rem;
+      margin-bottom: 1rem;
     }
 
     .listings-head h2 {
       margin: 0;
-      font-size: 1.15rem;
+      font-size: 1.25rem;
       font-weight: 800;
       letter-spacing: -0.02em;
     }
 
     .listings-head p {
-      margin: 0.25rem 0 0;
+      margin: 0.3rem 0 0;
       color: var(--muted);
-      font-size: 0.9rem;
+      font-size: 0.92rem;
     }
 
     .listings-empty {
-      padding: 1.4rem;
-      border: 1px dashed var(--line);
-      border-radius: 18px;
-      background: rgba(255,255,255,0.55);
+      padding: 1.6rem 1.2rem;
+      border: 1.5px dashed var(--line);
+      border-radius: 20px;
+      background: rgba(255,255,255,0.6);
       color: var(--muted);
       text-align: center;
       font-size: 0.95rem;
+      line-height: 1.5;
     }
 
     .listings-stack {
       display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 1rem;
     }
 
     .result {
-      border-radius: 24px;
+      display: flex;
+      flex-direction: column;
+      border-radius: 22px;
       border: 1px solid var(--line);
       background: var(--panel);
-      box-shadow: var(--shadow);
+      box-shadow: 0 16px 40px rgba(20, 18, 26, 0.08);
       overflow: hidden;
       animation: up 0.4s ease both;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
     }
 
-    .result-badge {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.75rem;
-      padding: 0.75rem 1.2rem;
-      background: linear-gradient(90deg, #7a1f2e, #9a3a45);
-      color: #fff;
-    }
-
-    .result-badge strong {
-      font-size: 0.82rem;
-      font-weight: 800;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-
-    .result-badge span {
-      font-size: 0.8rem;
-      opacity: 0.9;
-    }
-
-    .result-body {
-      display: grid;
-      grid-template-columns: 1.05fr 1fr;
-      gap: 0;
+    .result:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 22px 48px rgba(20, 18, 26, 0.12);
     }
 
     .result-media {
       position: relative;
-      min-height: 260px;
+      aspect-ratio: 4 / 3;
       background:
-        radial-gradient(circle at 30% 20%, rgba(122, 31, 46, 0.08), transparent 45%),
+        radial-gradient(circle at 30% 20%, rgba(122, 31, 46, 0.1), transparent 45%),
         #f3eee8;
-      border-right: 1px solid var(--line);
     }
 
     .result-media img {
@@ -567,17 +550,34 @@
       display: block;
     }
 
+    .result-num {
+      position: absolute;
+      top: 0.75rem;
+      left: 0.75rem;
+      z-index: 1;
+      padding: 0.35rem 0.65rem;
+      border-radius: 999px;
+      background: rgba(20, 18, 26, 0.72);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      backdrop-filter: blur(6px);
+    }
+
     .result-content {
-      padding: 1.35rem 1.4rem 1.2rem;
+      padding: 1.05rem 1.1rem 1.1rem;
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 0.65rem;
+      flex: 1;
     }
 
     .result-top {
       display: flex;
       justify-content: space-between;
-      gap: 1rem;
+      gap: 0.75rem;
       align-items: start;
       margin: 0;
     }
@@ -585,19 +585,19 @@
     .result-top h3 {
       margin: 0;
       font-family: Newsreader, Georgia, serif;
-      font-size: 1.45rem;
+      font-size: 1.2rem;
       font-weight: 600;
       letter-spacing: -0.02em;
-      line-height: 1.2;
+      line-height: 1.25;
     }
 
     .price {
       margin: 0;
-      padding: 0.35rem 0.7rem;
+      padding: 0.3rem 0.65rem;
       border-radius: 999px;
-      background: rgba(122, 31, 46, 0.08);
+      background: rgba(122, 31, 46, 0.09);
       color: var(--maroon);
-      font-size: 1.1rem;
+      font-size: 0.98rem;
       font-weight: 800;
       white-space: nowrap;
     }
@@ -605,46 +605,39 @@
     .tags {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.4rem;
+      gap: 0.35rem;
       margin: 0;
     }
 
     .tag {
-      padding: 0.32rem 0.7rem;
+      padding: 0.28rem 0.6rem;
       border-radius: 999px;
       background: rgba(122, 31, 46, 0.08);
       color: var(--maroon);
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       font-weight: 700;
-    }
-
-    .desc-label {
-      margin: 0.15rem 0 0;
-      color: var(--muted);
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
     }
 
     .desc {
       margin: 0;
       color: #3d3842;
-      font-size: 0.95rem;
-      line-height: 1.65;
-      white-space: pre-wrap;
+      font-size: 0.88rem;
+      line-height: 1.55;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
     .result-meta {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.55rem;
-      margin-top: 0.15rem;
+      gap: 0.45rem;
     }
 
     .meta-item {
-      padding: 0.7rem 0.8rem;
-      border-radius: 12px;
+      padding: 0.55rem 0.65rem;
+      border-radius: 10px;
       background: var(--soft);
       border: 1px solid var(--line);
     }
@@ -652,33 +645,33 @@
     .meta-item span {
       display: block;
       color: var(--muted);
-      font-size: 0.72rem;
+      font-size: 0.68rem;
       font-weight: 700;
       letter-spacing: 0.03em;
       text-transform: uppercase;
-      margin-bottom: 0.2rem;
+      margin-bottom: 0.15rem;
     }
 
     .meta-item strong {
-      font-size: 0.9rem;
+      font-size: 0.82rem;
       font-weight: 700;
     }
 
     .result-actions {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.6rem;
+      gap: 0.5rem;
       margin-top: auto;
-      padding-top: 0.9rem;
+      padding-top: 0.75rem;
       border-top: 1px solid var(--line);
     }
 
     .btn-danger,
     .btn-soft {
-      min-height: 2.6rem;
-      padding: 0 1rem;
+      min-height: 2.4rem;
+      padding: 0 0.9rem;
       border-radius: 999px;
-      font-size: 0.88rem;
+      font-size: 0.84rem;
       font-weight: 700;
       box-shadow: none;
     }
@@ -706,13 +699,7 @@
     }
 
     @media (max-width: 900px) {
-      .result-body { grid-template-columns: 1fr; }
-      .result-media {
-        min-height: 220px;
-        border-right: 0;
-        border-bottom: 1px solid var(--line);
-      }
-      .result-meta { grid-template-columns: 1fr; }
+      .listings-stack { grid-template-columns: 1fr; }
     }
 
     footer {
@@ -782,7 +769,7 @@
       <div class="workspace-head">
         <div>
           <h2>Create listing</h2>
-          <p>Add multiple products â€” each one is saved below.</p>
+          <p>Add product 1, then product 2, and keep building your catalog.</p>
         </div>
         <div class="steps" aria-label="Progress">
           <span id="step-photo"><b>1</b>Photo</span>
@@ -857,7 +844,8 @@
           <button class="btn btn-soft hidden" id="delete-all-listings" type="button">Delete all listings</button>
         </div>
         <div class="listings-empty" id="listings-empty">
-          Generate a listing to start building your product catalog.
+          No products yet. Add a photo + description above, then click
+          <strong>Add product listing</strong>. You can repeat this for every product.
         </div>
         <div class="listings-stack" id="listings-stack"></div>
       </section>
@@ -871,7 +859,7 @@
 
   <script>
     (function () {
-      var STORAGE_KEY = "listing-studio-products-v1";
+      var STORAGE_KEY = "listing-studio-products-v2";
       var state = { hasPhoto: false, transcript: "", isRecording: false };
       var listings = [];
       var recognition = null, previewUrl = null, finalTranscript = "", photoDataUrl = "";
@@ -907,9 +895,7 @@
       function saveListings() {
         try {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(listings));
-        } catch (e) {
-          /* storage full or blocked */
-        }
+        } catch (e) {}
       }
 
       function setStep(id, on) {
@@ -925,7 +911,7 @@
         var ready = state.hasPhoto && !!state.transcript.trim();
         generateButton.disabled = !ready;
         generateHint.textContent = ready
-          ? "This will add a new product to your catalog."
+          ? "Adds this product to your catalog. Then you can add another."
           : "Add a photo and a description to continue.";
         clearInputs.classList.toggle("hidden", !state.hasPhoto && !state.transcript.trim());
         renderListings();
@@ -942,10 +928,10 @@
       function renderListings() {
         var count = listings.length;
         listingsCount.textContent = count === 0
-          ? "No listings yet"
+          ? "No listings yet â€” add your first product above"
           : count === 1
-            ? "1 product saved"
-            : count + " products saved";
+            ? "1 product in your catalog"
+            : count + " products in your catalog";
         listingsEmpty.classList.toggle("hidden", count > 0);
         deleteAllListings.classList.toggle("hidden", count === 0);
         listingsStack.innerHTML = "";
@@ -954,37 +940,29 @@
           var card = document.createElement("article");
           card.className = "result";
           card.dataset.id = item.id;
-
           var tagsHtml = (item.tags || []).map(function (t) {
             return '<span class="tag">' + escapeHtml(t) + "</span>";
           }).join("");
+          var shortDesc = String(item.description || "").split("\n\n")[0];
 
           card.innerHTML =
-            '<div class="result-badge">' +
-              "<strong>Product " + (count - index) + "</strong>" +
-              "<span>" + escapeHtml(item.category || "Handmade") + "</span>" +
+            '<div class="result-media">' +
+              '<span class="result-num">#' + (count - index) + "</span>" +
+              (item.image ? '<img src="' + item.image + '" alt="' + escapeHtml(item.title) + '" />' : "") +
             "</div>" +
-            '<div class="result-body">' +
-              '<div class="result-media">' +
-                (item.image
-                  ? '<img src="' + item.image + '" alt="' + escapeHtml(item.title) + '" />'
-                  : "") +
+            '<div class="result-content">' +
+              '<div class="result-top">' +
+                "<h3>" + escapeHtml(item.title) + "</h3>" +
+                '<p class="price">' + escapeHtml(item.price) + "</p>" +
               "</div>" +
-              '<div class="result-content">' +
-                '<div class="result-top">' +
-                  "<h3>" + escapeHtml(item.title) + "</h3>" +
-                  '<p class="price">' + escapeHtml(item.price) + "</p>" +
-                "</div>" +
-                '<div class="tags">' + tagsHtml + "</div>" +
-                '<p class="desc-label">Description</p>' +
-                '<p class="desc">' + escapeHtml(item.description) + "</p>" +
-                '<div class="result-meta">' +
-                  '<div class="meta-item"><span>Category</span><strong>' + escapeHtml(item.category) + "</strong></div>" +
-                  '<div class="meta-item"><span>Condition</span><strong>New · Handmade</strong></div>' +
-                "</div>" +
-                '<div class="result-actions">' +
-                  '<button class="btn btn-danger" type="button" data-delete="' + item.id + '">Delete listing</button>' +
-                "</div>" +
+              '<div class="tags">' + tagsHtml + "</div>" +
+              '<p class="desc">' + escapeHtml(shortDesc) + "</p>" +
+              '<div class="result-meta">' +
+                '<div class="meta-item"><span>Category</span><strong>' + escapeHtml(item.category) + "</strong></div>" +
+                '<div class="meta-item"><span>Condition</span><strong>New</strong></div>' +
+              "</div>" +
+              '<div class="result-actions">' +
+                '<button class="btn btn-danger" type="button" data-delete="' + item.id + '">Delete</button>' +
               "</div>" +
             "</div>";
 
@@ -1025,37 +1003,38 @@
       }
 
       function buildListing(clean, image) {
-        var first = clean.split(/[.?!?]/)[0].trim();
+        var first = clean.split(/[.?!]/)[0].trim().split("\u0964")[0].trim();
         var title = first.length > 6 ? first.slice(0, 64) : "Handmade Product";
         var words = clean.toLowerCase();
         var tags = ["Handmade"];
         var category = "Handmade crafts";
-        if (/diya|????|lamp|candle|macrame|macramé|keychain|feather/.test(words)) {
+
+        if (/diya|lamp|candle|macrame|keychain|feather|\u0926\u0940\u092f\u093e/.test(words)) {
           tags.push("Home decor");
           category = "Home decor";
         }
-        if (/pottery|??????|clay|ceramic/.test(words)) {
+        if (/pottery|clay|ceramic|\u092e\u093f\u091f\u094d\u091f\u0940/.test(words)) {
           tags.push("Pottery");
           category = "Pottery";
         }
-        if (/silk|?????|fabric|?????|saree|textile/.test(words)) {
+        if (/silk|fabric|saree|textile|\u0938\u093f\u0932\u094d\u0915|\u0915\u092a\u0921\u093c\u093e/.test(words)) {
           tags.push("Textile");
           category = "Textiles";
         }
-        if (/wood|?????|bamboo/.test(words)) {
+        if (/wood|bamboo|\u0932\u0915\u0921\u093c\u0940/.test(words)) {
           tags.push("Woodwork");
           category = "Woodwork";
         }
-        if (/jewelry|jewellery|????|necklace|earring/.test(words)) {
+        if (/jewelry|jewellery|necklace|earring|\u0917\u0939\u0928\u093e/.test(words)) {
           tags.push("Jewellery");
           category = "Jewellery";
         }
-        if (/gift|?????|present/.test(words)) tags.push("Gift ready");
+        if (/gift|present|\u0917\u093f\u092b\u094d\u091f/.test(words)) tags.push("Gift ready");
 
         var price = 499;
         if (clean.length > 80) price = 799;
         if (clean.length > 140) price = 1299;
-        if (/silk|?????|silver|gold|????|macrame|macramé/.test(words)) price += 300;
+        if (/silk|silver|gold|macrame|\u0938\u093f\u0932\u094d\u0915|\u0938\u094b\u0928\u093e/.test(words)) price += 300;
 
         var desc = clean;
         if (desc.length < 40) {
@@ -1067,7 +1046,7 @@
         return {
           id: "p-" + Date.now() + "-" + Math.floor(Math.random() * 1000),
           title: title,
-          price: "?" + price.toLocaleString("en-IN"),
+          price: "\u20b9" + price.toLocaleString("en-IN"),
           tags: tags.slice(0, 4),
           category: category,
           description: desc,
@@ -1080,8 +1059,8 @@
         else micButton.classList.remove("rec");
         language.disabled = state.isRecording;
         recordHint.textContent = state.isRecording
-          ? "Listening… tap again to stop"
-          : (SR ? "Tap the microphone to describe your product" : "Voice unavailable — please type instead");
+          ? "Listening... tap again to stop"
+          : (SR ? "Tap the microphone to describe your product" : "Voice unavailable - please type instead");
       }
 
       photoUpload.onclick = function () { photoInput.click(); };
@@ -1095,11 +1074,8 @@
         if (previewUrl) URL.revokeObjectURL(previewUrl);
         previewUrl = URL.createObjectURL(file);
         photoImg.src = previewUrl;
-        try {
-          photoDataUrl = await fileToDataUrl(file);
-        } catch (e) {
-          photoDataUrl = "";
-        }
+        try { photoDataUrl = await fileToDataUrl(file); }
+        catch (e) { photoDataUrl = ""; }
         state.hasPhoto = true;
         photoUpload.classList.add("hidden");
         photoPreview.classList.remove("hidden");
@@ -1195,9 +1171,7 @@
 
       generateButton.onclick = function () {
         if (!state.hasPhoto || !state.transcript.trim()) return;
-        var clean = state.transcript.trim();
-        var image = photoDataUrl || photoImg.src || "";
-        var item = buildListing(clean, image);
+        var item = buildListing(state.transcript.trim(), photoDataUrl || photoImg.src || "");
         listings.unshift(item);
         saveListings();
         resetFormForNextProduct();
